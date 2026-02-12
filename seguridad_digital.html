@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguridad Digital: Prevención de Riesgos en la Red</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        nav {
+            background: #2d3748;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0;
+        }
+
+        nav button {
+            background: transparent;
+            color: white;
+            border: none;
+            padding: 20px 30px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        nav button:hover {
+            background: #4a5568;
+        }
+
+        nav button.active {
+            background: #4a5568;
+            border-bottom: 3px solid #f093fb;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .info-card h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .risk-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .risk-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .risk-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #667eea;
+        }
+
+        .risk-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .risk-item .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .quiz-container {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .question {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #edf2f7;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .option:hover {
+            background: #e2e8f0;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: #bee3f8;
+            border-color: #3182ce;
+        }
+
+        .option.correct {
+            background: #c6f6d5;
+            border-color: #38a169;
+        }
+
+        .option.incorrect {
+            background: #fed7d7;
+            border-color: #e53e3e;
+        }
+
+        .case-study {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .case-study h3 {
+            color: #f5576c;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .case-study .scenario {
+            background: #fff5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #f5576c;
+        }
+
+        .response-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .response-option {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #e2e8f0;
+        }
+
+        .response-option:hover {
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+
+        .response-option h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .feedback {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideDown 0.5s;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.success {
+            background: #c6f6d5;
+            border-left: 4px solid #38a169;
+            color: #22543d;
+        }
+
+        .feedback.error {
+            background: #fed7d7;
+            border-left: 4px solid #e53e3e;
+            color: #742a2a;
+        }
+
+        .feedback.info {
+            background: #bee3f8;
+            border-left: 4px solid #3182ce;
+            color: #2c5282;
+        }
+
+        .detection-game {
+            background: #f7fafc;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .message-card {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .message-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .progress-bar {
+            background: #e2e8f0;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .synthesis-activity {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .drag-drop-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin: 20px 0;
+        }
+
+        .category-zone {
+            background: #f7fafc;
+            border: 3px dashed #cbd5e0;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 200px;
+        }
+
+        .category-zone h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .draggable-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            cursor: move;
+            transition: all 0.3s;
+        }
+
+        .draggable-item:hover {
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transform: scale(1.02);
+        }
+
+        .draggable-item.dragging {
+            opacity: 0.5;
+        }
+
+        .items-pool {
+            background: #fff5f5;
+            border: 2px solid #fc8181;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.3em;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            nav button {
+                padding: 15px 20px;
+                font-size: 0.9em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .drag-drop-area {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .alert-box {
+            background: #fef5e7;
+            border: 2px solid #f39c12;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .alert-box h4 {
+            color: #d68910;
+            margin-bottom: 10px;
+        }
+
+        .resources-list {
+            background: #f7fafc;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .resources-list h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .resources-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .resources-list li {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .resources-list li strong {
+            color: #2d3748;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛡️ Seguridad Digital</h1>
+            <p>Prevención de Violencia y Riesgos en la Red</p>
+        </header>
+
+        <nav>
+            <button onclick="showSection('intro')" class="active">Introducción</button>
+            <button onclick="showSection('tipos')">Tipos de Riesgo</button>
+            <button onclick="showSection('deteccion')">Detección</button>
+            <button onclick="showSection('casos')">Casos Prácticos</button>
+            <button onclick="showSection('verificacion')">Verificación</button>
+            <button onclick="showSection('sintesis')">Síntesis</button>
+            <button onclick="showSection('recursos')">Recursos</button>
+        </nav>
+
+        <div class="content">
+            <!-- SECCIÓN INTRODUCCIÓN -->
+            <section id="intro" class="section active">
+                <div class="info-card">
+                    <h2>Bienvenido/a al Módulo de Seguridad Digital</h2>
+                    <p style="font-size: 1.1em; line-height: 1.6;">
+                        En esta plataforma interactiva aprenderás a identificar, prevenir y responder ante situaciones de violencia y riesgo en internet. A través de actividades prácticas, estudios de caso y ejercicios de detección, desarrollarás las competencias necesarias para navegar de forma segura en el entorno digital.
+                    </p>
+                </div>
+
+                <div class="risk-grid">
+                    <div class="risk-item">
+                        <div class="icon">🎯</div>
+                        <h3>Objetivos</h3>
+                        <p>Identificar riesgos digitales y desarrollar estrategias de protección efectivas.</p>
+                    </div>
+                    <div class="risk-item">
+                        <div class="icon">🧠</div>
+                        <h3>Competencias</h3>
+                        <p>Pensamiento crítico, toma de decisiones y respuesta ante emergencias digitales.</p>
+                    </div>
+                    <div class="risk-item">
+                        <div class="icon">🤝</div>
+                        <h3>Colaboración</h3>
+                        <p>Crear entornos digitales seguros y respetuosos para toda la comunidad.</p>
+                    </div>
+                </div>
+
+                <div class="alert-box">
+                    <h4>⚠️ Importante</h4>
+                    <p>Si estás viviendo una situación de acoso o violencia digital, no estás solo/a. Al final de este módulo encontrarás recursos y contactos de ayuda inmediata.</p>
+                </div>
+            </section>
+
+            <!-- SECCIÓN TIPOS DE RIESGO -->
+            <section id="tipos" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Tipos de Violencia y Riesgo en la Red</h2>
+                
+                <div class="risk-grid">
+                    <div class="risk-item" onclick="showRiskDetail('ciberacoso')">
+                        <div class="icon">😢</div>
+                        <h3>Ciberacoso (Cyberbullying)</h3>
+                        <p>Uso de medios digitales para acosar, intimidar o humillar a otra persona de forma repetida.</p>
+                    </div>
+
+                    <div class="risk-item" onclick="showRiskDetail('sextorsion')">
+                        <div class="icon">📸</div>
+                        <h3>Sextorsión</h3>
+                        <p>Chantaje mediante imágenes o videos íntimos para obtener más contenido, dinero o favores.</p>
+                    </div>
+
+                    <div class="risk-item" onclick="showRiskDetail('suplantacion')">
+                        <div class="icon">🎭</div>
+                        <h3>Suplantación de Identidad</h3>
+                        <p>Uso fraudulento de la identidad de otra persona para engañar o cometer delitos.</p>
+                    </div>
+
+                    <div class="risk-item" onclick="showRiskDetail('grooming')">
+                        <div class="icon">👤</div>
+                        <h3>Grooming</h3>
+                        <p>Acercamiento de un adulto a menores para ganar su confianza con fines de abuso sexual.</p>
+                    </div>
+
+                    <div class="risk-item" onclick="showRiskDetail('contenidos')">
+                        <div class="icon">🚫</div>
+                        <h3>Contenidos Inadecuados</h3>
+                        <p>Exposición a material violento, sexual, o que promueve conductas peligrosas.</p>
+                    </div>
+
+                    <div class="risk-item" onclick="showRiskDetail('phishing')">
+                        <div class="icon">🎣</div>
+                        <h3>Phishing y Estafas</h3>
+                        <p>Engaños para obtener información personal, contraseñas o datos bancarios.</p>
+                    </div>
+                </div>
+
+                <div id="riskDetailContainer"></div>
+            </section>
+
+            <!-- SECCIÓN DETECCIÓN -->
+            <section id="deteccion" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Actividad de Detección: ¿Seguro o Peligroso?</h2>
+                
+                <div class="detection-game">
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Lee cada situación y determina si representa una señal de alerta o es una situación segura.
+                    </p>
+                    
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="detectionProgress" style="width: 0%;">0%</div>
+                    </div>
+
+                    <div id="detectionMessages"></div>
+                    
+                    <div class="score-display" id="detectionScore" style="display: none;">
+                        Tu puntuación: <span id="scoreValue">0</span>/10
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN CASOS PRÁCTICOS -->
+            <section id="casos" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Estudio de Casos Prácticos</h2>
+                
+                <div id="casesContainer"></div>
+            </section>
+
+            <!-- SECCIÓN VERIFICACIÓN -->
+            <section id="verificacion" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Actividad de Verificación de Conocimientos</h2>
+                
+                <div class="quiz-container">
+                    <div id="quizQuestions"></div>
+                    
+                    <div class="buttons-container">
+                        <button class="btn" onclick="checkQuizAnswers()">Verificar Respuestas</button>
+                        <button class="btn btn-secondary" onclick="resetQuiz()">Reiniciar</button>
+                    </div>
+                    
+                    <div id="quizFeedback" class="feedback"></div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN SÍNTESIS -->
+            <section id="sintesis" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Actividad de Síntesis: Clasifica las Situaciones</h2>
+                
+                <div class="synthesis-activity">
+                    <p style="font-size: 1.1em; margin-bottom: 20px;">
+                        Arrastra cada situación a la categoría de riesgo correspondiente.
+                    </p>
+
+                    <div class="items-pool" id="itemsPool">
+                        <h4 style="color: #2d3748; margin-bottom: 15px;">📋 Situaciones para clasificar:</h4>
+                        <div id="draggableItems"></div>
+                    </div>
+
+                    <div class="drag-drop-area">
+                        <div class="category-zone" id="zone-ciberacoso" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <h4>😢 Ciberacoso</h4>
+                        </div>
+                        <div class="category-zone" id="zone-sextorsion" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <h4>📸 Sextorsión</h4>
+                        </div>
+                        <div class="category-zone" id="zone-suplantacion" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <h4>🎭 Suplantación</h4>
+                        </div>
+                        <div class="category-zone" id="zone-grooming" ondrop="drop(event)" ondragover="allowDrop(event)">
+                            <h4>👤 Grooming</h4>
+                        </div>
+                    </div>
+
+                    <div class="buttons-container">
+                        <button class="btn" onclick="checkSynthesis()">Verificar Clasificación</button>
+                        <button class="btn btn-secondary" onclick="resetSynthesis()">Reiniciar</button>
+                    </div>
+
+                    <div id="synthesisFeedback" class="feedback"></div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN RECURSOS -->
+            <section id="recursos" class="section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2em;">Recursos y Ayuda</h2>
+                
+                <div class="info-card">
+                    <h3 style="margin-bottom: 15px;">🆘 ¿Necesitas Ayuda Inmediata?</h3>
+                    <p style="font-size: 1.1em;">Si estás en peligro o viviendo una situación de acoso, estas son tus opciones de respuesta:</p>
+                </div>
+
+                <div class="resources-list">
+                    <h3>📞 Líneas de Ayuda (España)</h3>
+                    <ul>
+                        <li><strong>Línea de Ayuda en Ciberseguridad INCIBE:</strong> 017 (Gratuita y confidencial)</li>
+                        <li><strong>Teléfono ANAR (Niños y Adolescentes):</strong> 900 20 20 10</li>
+                        <li><strong>Policía Nacional - Grupo de Delitos Telemáticos:</strong> 091</li>
+                        <li><strong>Guardia Civil:</strong> 062</li>
+                        <li><strong>Emergencias:</strong> 112</li>
+                    </ul>
+                </div>
+
+                <div class="resources-list">
+                    <h3>🛡️ Pasos de Acción Inmediata</h3>
+                    <ul>
+                        <li><strong>No respondas:</strong> No entres en el juego del acosador. Bloquea y no cedas a chantajes.</li>
+                        <li><strong>Guarda evidencias:</strong> Captura pantallas de mensajes, perfiles y cualquier contenido relevante.</li>
+                        <li><strong>Habla con un adulto de confianza:</strong> Padres, tutores, profesores o psicólogos escolares.</li>
+                        <li><strong>Denuncia:</strong> Repórtalos en la plataforma y considera la denuncia policial.</li>
+                        <li><strong>Protege tu información:</strong> Cambia contraseñas y revisa la privacidad de tus cuentas.</li>
+                    </ul>
+                </div>
+
+                <div class="resources-list">
+                    <h3>🌐 Recursos Online</h3>
+                    <ul>
+                        <li><strong>IS4K (Internet Segura for Kids):</strong> www.is4k.es</li>
+                        <li><strong>INCIBE:</strong> www.incibe.es</li>
+                        <li><strong>Pantallas Amigas:</strong> www.pantallasamigas.net</li>
+                        <li><strong>OSI (Oficina de Seguridad del Internauta):</strong> www.osi.es</li>
+                    </ul>
+                </div>
+
+                <div class="case-study">
+                    <h3>💡 Decálogo de Seguridad Digital</h3>
+                    <ol style="padding-left: 20px; line-height: 1.8;">
+                        <li>Protege tu privacidad: no compartas información personal con desconocidos</li>
+                        <li>Usa contraseñas seguras y únicas para cada cuenta</li>
+                        <li>Piensa antes de publicar: lo que subes a internet puede quedarse para siempre</li>
+                        <li>Configura la privacidad de tus redes sociales</li>
+                        <li>No aceptes solicitudes de amistad de personas desconocidas</li>
+                        <li>Sé respetuoso/a online: trata a los demás como te gustaría ser tratado/a</li>
+                        <li>Desconfía de ofertas demasiado buenas para ser verdad</li>
+                        <li>Verifica la autenticidad de mensajes y enlaces antes de hacer clic</li>
+                        <li>Mantén actualizados tus dispositivos y aplicaciones</li>
+                        <li>Pide ayuda si algo te hace sentir incómodo/a o inseguro/a</li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // Navegación entre secciones
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            const buttons = document.querySelectorAll('nav button');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Detalles de riesgos
+        function showRiskDetail(type) {
+            const details = {
+                ciberacoso: {
+                    title: 'Ciberacoso (Cyberbullying)',
+                    description: 'El ciberacoso implica el uso de tecnología para hostigar, amenazar, avergonzar o atacar a otra persona.',
+                    examples: [
+                        'Enviar mensajes amenazantes o insultantes repetidamente',
+                        'Difundir rumores o información falsa sobre alguien',
+                        'Publicar fotos o videos vergonzosos sin consentimiento',
+                        'Crear perfiles falsos para burlarse de alguien',
+                        'Excluir intencionadamente a alguien de grupos online'
+                    ],
+                    prevention: [
+                        'No respondas a provocaciones, bloquea al acosador',
+                        'Guarda todas las evidencias (capturas de pantalla)',
+                        'Informa a un adulto de confianza inmediatamente',
+                        'Reporta el contenido y al usuario en la plataforma',
+                        'Considera denunciar a las autoridades si es grave'
+                    ]
+                },
+                sextorsion: {
+                    title: 'Sextorsión',
+                    description: 'Chantaje que utiliza imágenes o videos íntimos de la víctima para extorsionarla.',
+                    examples: [
+                        'Amenazar con publicar fotos íntimas si no envías más',
+                        'Pedir dinero a cambio de no difundir contenido privado',
+                        'Exigir encuentros físicos bajo amenaza de exposición',
+                        'Obtener credenciales mediante engaño y luego chantajear'
+                    ],
+                    prevention: [
+                        'NUNCA envíes imágenes íntimas, sin importar quién lo pida',
+                        'No cedas al chantaje: los extorsionadores no cumplen promesas',
+                        'Denuncia inmediatamente a policía y plataforma',
+                        'Busca ayuda profesional (línea 017)',
+                        'Recuerda: la culpa es del extorsionador, no tuya'
+                    ]
+                },
+                suplantacion: {
+                    title: 'Suplantación de Identidad',
+                    description: 'Uso fraudulento de la identidad de otra persona en el entorno digital.',
+                    examples: [
+                        'Crear perfiles falsos usando fotos y datos de otra persona',
+                        'Acceder a cuentas ajenas con contraseñas robadas',
+                        'Enviar mensajes haciéndose pasar por otra persona',
+                        'Realizar compras o transacciones con datos robados'
+                    ],
+                    prevention: [
+                        'Usa autenticación de dos factores en todas tus cuentas',
+                        'No compartas contraseñas con nadie',
+                        'Revisa regularmente la actividad de tus cuentas',
+                        'Reporta perfiles falsos que usen tu identidad',
+                        'Denuncia el robo de identidad a las autoridades'
+                    ]
+                },
+                grooming: {
+                    title: 'Grooming',
+                    description: 'Acoso sexual de adultos hacia menores a través de internet.',
+                    examples: [
+                        'Un adulto se hace pasar por menor para ganarse la confianza',
+                        'Solicitudes progresivas de fotos cada vez más íntimas',
+                        'Proposiciones sexuales o invitaciones a encuentros',
+                        'Chantaje después de obtener material comprometedor'
+                    ],
+                    prevention: [
+                        'No hables con desconocidos online, especialmente adultos',
+                        'Nunca compartas información personal o fotos íntimas',
+                        'Desconfía de quien quiere conocerte en persona',
+                        'Cuenta inmediatamente a un adulto si alguien te incomoda',
+                        'Recuerda: un adulto nunca debe pedirte contenido sexual'
+                    ]
+                },
+                contenidos: {
+                    title: 'Acceso a Contenidos Inadecuados',
+                    description: 'Exposición a material violento, sexual, o que promueve conductas peligrosas.',
+                    examples: [
+                        'Videos de violencia extrema o autolesiones',
+                        'Pornografía o contenido sexual explícito',
+                        'Contenido que promueve trastornos alimentarios',
+                        'Información sobre fabricación de armas o drogas',
+                        'Propaganda extremista o de odio'
+                    ],
+                    prevention: [
+                        'Usa controles parentales y filtros de contenido',
+                        'Navega en espacios supervisados cuando seas menor',
+                        'Sal inmediatamente de sitios con contenido perturbador',
+                        'Habla con un adulto sobre lo que viste',
+                        'Reporta contenido ilegal o extremadamente violento'
+                    ]
+                },
+                phishing: {
+                    title: 'Phishing y Estafas Online',
+                    description: 'Intentos de engaño para obtener información confidencial o dinero.',
+                    examples: [
+                        'Correos falsos de bancos pidiendo contraseñas',
+                        'Mensajes de "premios" que piden datos personales',
+                        'Enlaces maliciosos que roban información',
+                        'Ofertas de trabajo falsas que solicitan dinero',
+                        'Tiendas online fraudulentas'
+                    ],
+                    prevention: [
+                        'Verifica siempre la dirección del remitente',
+                        'No hagas clic en enlaces sospechosos',
+                        'Los bancos nunca piden contraseñas por correo',
+                        'Desconfía de ofertas demasiado buenas',
+                        'Usa sitios web seguros (https://) para compras'
+                    ]
+                }
+            };
+
+            const detail = details[type];
+            const container = document.getElementById('riskDetailContainer');
+            
+            container.innerHTML = `
+                <div class="case-study" style="margin-top: 30px;">
+                    <h3>${detail.title}</h3>
+                    <div class="scenario">
+                        <p style="font-size: 1.1em; margin-bottom: 15px;"><strong>¿Qué es?</strong></p>
+                        <p>${detail.description}</p>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: #e53e3e; margin-bottom: 10px;">⚠️ Ejemplos:</h4>
+                        <ul style="padding-left: 20px; line-height: 1.8;">
+                            ${detail.examples.map(ex => `<li>${ex}</li>`).join('')}
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <h4 style="color: #38a169; margin-bottom: 10px;">✅ Cómo Responder:</h4>
+                        <ul style="padding-left: 20px; line-height: 1.8;">
+                            ${detail.prevention.map(prev => `<li>${prev}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+            
+            container.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Actividad de detección
+        const detectionSituations = [
+            { text: 'Tu mejor amigo te envía un mensaje gracioso sobre otro compañero sin su consentimiento', safe: false, explanation: '🚫 Compartir contenido burlesco sobre alguien sin su permiso puede ser ciberacoso.' },
+            { text: 'Usas contraseñas diferentes para cada una de tus redes sociales', safe: true, explanation: '✅ Usar contraseñas únicas es una excelente práctica de seguridad.' },
+            { text: 'Recibes un email de tu banco pidiendo que actualices tu contraseña mediante un enlace', safe: false, explanation: '🚫 Posible phishing. Los bancos NUNCA piden contraseñas por email.' },
+            { text: 'Alguien que no conoces te pide que le envíes fotos tuyas por mensaje privado', safe: false, explanation: '🚫 Señal de alerta. Nunca envíes fotos a desconocidos.' },
+            { text: 'Configuras la privacidad de tu Instagram para que solo tus amigos vean tus publicaciones', safe: true, explanation: '✅ Controlar quién ve tu contenido es fundamental para tu seguridad.' },
+            { text: 'Un compañero comparte capturas de una conversación privada tuya en un grupo', safe: false, explanation: '🚫 Violación de privacidad que puede constituir ciberacoso.' },
+            { text: 'Verificas la URL antes de introducir datos personales en una página web', safe: true, explanation: '✅ Verificar sitios web (https) es esencial para evitar estafas.' },
+            { text: 'Alguien mayor que tú te pide encontrarte en persona después de hablar online', safe: false, explanation: '🚫 Señal grave de grooming. Nunca te encuentres con desconocidos.' },
+            { text: 'Reportas un perfil falso que está usando fotos de un amigo', safe: true, explanation: '✅ Reportar suplantaciones de identidad protege a otros.' },
+            { text: 'Aceptas una solicitud de amistad de alguien que tiene muchos amigos en común aunque no lo conoces', safe: false, explanation: '🚫 Los perfiles falsos suelen tener amigos en común. Verifica primero.' }
+        ];
+
+        let currentDetectionIndex = 0;
+        let detectionScore = 0;
+
+        function initDetection() {
+            renderDetectionMessage();
+        }
+
+        function renderDetectionMessage() {
+            const container = document.getElementById('detectionMessages');
+            const situation = detectionSituations[currentDetectionIndex];
+            
+            container.innerHTML = `
+                <div class="message-card">
+                    <div class="message-header">
+                        <div class="avatar">${currentDetectionIndex + 1}</div>
+                        <strong>Situación ${currentDetectionIndex + 1} de ${detectionSituations.length}</strong>
+                    </div>
+                    <p style="font-size: 1.1em; margin: 15px 0;">${situation.text}</p>
+                    <div class="buttons-container">
+                        <button class="btn" onclick="checkDetection(true)">✅ Seguro</button>
+                        <button class="btn btn-secondary" onclick="checkDetection(false)">⚠️ Peligroso</button>
+                    </div>
+                    <div id="detectionMessageFeedback"></div>
+                </div>
+            `;
+        }
+
+        function checkDetection(userSaysItsSafe) {
+            const situation = detectionSituations[currentDetectionIndex];
+            const feedbackDiv = document.getElementById('detectionMessageFeedback');
+            const isCorrect = userSaysItsSafe === situation.safe;
+            
+            if (isCorrect) {
+                detectionScore++;
+                feedbackDiv.innerHTML = `<div class="feedback success show">${situation.explanation}</div>`;
+            } else {
+                feedbackDiv.innerHTML = `<div class="feedback error show">${situation.explanation}</div>`;
+            }
+            
+            const progress = ((currentDetectionIndex + 1) / detectionSituations.length) * 100;
+            document.getElementById('detectionProgress').style.width = progress + '%';
+            document.getElementById('detectionProgress').textContent = Math.round(progress) + '%';
+            
+            setTimeout(() => {
+                currentDetectionIndex++;
+                if (currentDetectionIndex < detectionSituations.length) {
+                    renderDetectionMessage();
+                } else {
+                    showDetectionResults();
+                }
+            }, 2000);
+        }
+
+        function showDetectionResults() {
+            const container = document.getElementById('detectionMessages');
+            const scoreDisplay = document.getElementById('detectionScore');
+            const scoreValue = document.getElementById('scoreValue');
+            
+            scoreValue.textContent = detectionScore;
+            scoreDisplay.style.display = 'block';
+            
+            let message = '';
+            if (detectionScore >= 9) {
+                message = '¡Excelente! Tienes un conocimiento muy sólido sobre seguridad digital.';
+            } else if (detectionScore >= 7) {
+                message = '¡Muy bien! Tienes buenas bases, pero revisa algunos conceptos.';
+            } else if (detectionScore >= 5) {
+                message = 'Bien, pero necesitas reforzar tu conocimiento sobre riesgos digitales.';
+            } else {
+                message = 'Es importante que revises todo el material para protegerte mejor online.';
+            }
+            
+            container.innerHTML = `
+                <div class="info-card">
+                    <h3>Resultados del Test de Detección</h3>
+                    <p style="font-size: 1.2em; margin: 15px 0;">${message}</p>
+                </div>
+            `;
+            
+            container.innerHTML += `
+                <button class="btn" onclick="resetDetection()">🔄 Repetir Actividad</button>
+            `;
+        }
+
+        function resetDetection() {
+            currentDetectionIndex = 0;
+            detectionScore = 0;
+            document.getElementById('detectionScore').style.display = 'none';
+            document.getElementById('detectionProgress').style.width = '0%';
+            document.getElementById('detectionProgress').textContent = '0%';
+            initDetection();
+        }
+
+        // Casos prácticos
+        const practicalCases = [
+            {
+                title: 'Caso 1: El Grupo de WhatsApp',
+                scenario: 'Laura, de 15 años, descubre que sus compañeros han creado un grupo de WhatsApp donde comparten memes burlándose de ella. Le hacen comentarios sobre su aspecto físico y la excluyen de las actividades de clase. Laura se siente cada vez más aislada y ha comenzado a tener problemas para dormir.',
+                type: 'Ciberacoso',
+                responses: [
+                    {
+                        title: 'Ignorar la situación',
+                        correct: false,
+                        feedback: '❌ Ignorar el acoso no hace que desaparezca y puede empeorar. Laura necesita tomar acción para protegerse.'
+                    },
+                    {
+                        title: 'Responder con insultos',
+                        correct: false,
+                        feedback: '❌ Responder con agresión solo escalará el conflicto y podría convertir a Laura en acosadora también.'
+                    },
+                    {
+                        title: 'Guardar evidencias y hablar con un adulto',
+                        correct: true,
+                        feedback: '✅ Correcto. Laura debe capturar pantallas del grupo, bloquear a los acosadores, y reportar la situación a sus padres y profesores. Es fundamental buscar apoyo.'
+                    },
+                    {
+                        title: 'Abandonar todas sus redes sociales',
+                        correct: false,
+                        feedback: '❌ Laura no debe ser quien pierda su espacio digital. Los acosadores deben enfrentar consecuencias, no la víctima.'
+                    }
+                ]
+            },
+            {
+                title: 'Caso 2: La Solicitud Sospechosa',
+                scenario: 'Marcos, de 13 años, recibe una solicitud de amistad en Instagram de "Ana", una chica que dice tener 14 años. Después de aceptarla, "Ana" comienza a preguntarle dónde vive, a qué colegio va, y le pide fotos. Cuando Marcos pregunta si pueden hacer videollamada, "Ana" siempre tiene excusas.',
+                type: 'Grooming',
+                responses: [
+                    {
+                        title: 'Seguir hablando pero sin dar información',
+                        correct: false,
+                        feedback: '❌ Continuar la conversación es peligroso. Los groomers son expertos en manipulación y pueden obtener información indirectamente.'
+                    },
+                    {
+                        title: 'Enviar una foto pero sin mostrar la cara',
+                        correct: false,
+                        feedback: '❌ NUNCA enviar fotos a desconocidos. Los metadatos pueden revelar ubicación y cualquier imagen puede ser mal utilizada.'
+                    },
+                    {
+                        title: 'Bloquear, reportar e informar a un adulto',
+                        correct: true,
+                        feedback: '✅ Correcto. Las señales (no hacer videollamada, pedir información personal y fotos) indican posible grooming. Marcos debe bloquear, reportar el perfil a Instagram, y contárselo inmediatamente a sus padres.'
+                    },
+                    {
+                        title: 'Quedar en un lugar público para conocerse',
+                        correct: false,
+                        feedback: '❌ NUNCA quedar con desconocidos de internet, incluso en lugares públicos. Es extremadamente peligroso.'
+                    }
+                ]
+            },
+            {
+                title: 'Caso 3: El Chantaje',
+                scenario: 'Sofía, de 16 años, compartió fotos en ropa interior con su novio. Después de terminar la relación, él la amenaza con publicar las fotos en redes sociales si no vuelve con él. Sofía está aterrorizada y no sabe qué hacer.',
+                type: 'Sextorsión',
+                responses: [
+                    {
+                        title: 'Volver con él para evitar la publicación',
+                        correct: false,
+                        feedback: '❌ Ceder al chantaje nunca funciona. El extorsionador seguirá manipulando y el abuso continuará.'
+                    },
+                    {
+                        title: 'Enviarle más fotos para contentarlo',
+                        correct: false,
+                        feedback: '❌ Esto solo le da más material para el chantaje. La sextorsión empeorará.'
+                    },
+                    {
+                        title: 'Denunciar inmediatamente a policía y plataformas',
+                        correct: true,
+                        feedback: '✅ Correcto. La sextorsión es un DELITO grave. Sofía debe: 1) Guardar todas las pruebas, 2) NO ceder al chantaje, 3) Denunciar a la policía, 4) Contárselo a sus padres, 5) Llamar al 017 para orientación. La culpa es del extorsionador, no de Sofía.'
+                    },
+                    {
+                        title: 'Borrar todas sus redes sociales',
+                        correct: false,
+                        feedback: '❌ Esto no soluciona el problema. El chantajista seguirá teniendo el material y Sofía necesita ayuda profesional y legal.'
+                    }
+                ]
+            }
+        ];
+
+        function initCases() {
+            const container = document.getElementById('casesContainer');
+            container.innerHTML = practicalCases.map((caso, index) => `
+                <div class="case-study">
+                    <h3>${caso.title}</h3>
+                    <div style="background: #e6fffa; padding: 15px; border-radius: 8px; margin: 10px 0;">
+                        <strong>Tipo de riesgo:</strong> ${caso.type}
+                    </div>
+                    <div class="scenario">
+                        <p style="font-size: 1.05em; line-height: 1.7;">${caso.scenario}</p>
+                    </div>
+                    
+                    <h4 style="color: #667eea; margin: 20px 0 15px 0;">¿Cuál es la mejor respuesta?</h4>
+                    <div class="response-options">
+                        ${caso.responses.map((resp, respIndex) => `
+                            <div class="response-option" onclick="selectCaseResponse(${index}, ${respIndex})">
+                                <h4>${resp.title}</h4>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="caseFeedback${index}" class="feedback"></div>
+                </div>
+            `).join('');
+        }
+
+        function selectCaseResponse(caseIndex, responseIndex) {
+            const caso = practicalCases[caseIndex];
+            const response = caso.responses[responseIndex];
+            const feedbackDiv = document.getElementById(`caseFeedback${caseIndex}`);
+            
+            if (response.correct) {
+                feedbackDiv.className = 'feedback success show';
+            } else {
+                feedbackDiv.className = 'feedback error show';
+            }
+            
+            feedbackDiv.innerHTML = `
+                <strong>${response.feedback}</strong>
+                ${!response.correct ? `<p style="margin-top: 10px;">Busca la respuesta correcta para entender la mejor forma de actuar.</p>` : ''}
+            `;
+        }
+
+        // Quiz de verificación
+        const quizQuestions = [
+            {
+                question: '¿Qué es el ciberacoso?',
+                options: [
+                    'Usar internet para estudiar',
+                    'Hostigar, amenazar o humillar a alguien mediante medios digitales de forma repetida',
+                    'Jugar videojuegos online',
+                    'Enviar correos electrónicos'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Si recibes un mensaje amenazante, ¿qué debes hacer PRIMERO?',
+                options: [
+                    'Responder con insultos',
+                    'Borrarlo y olvidarlo',
+                    'Guardar evidencias (captura de pantalla)',
+                    'Contárselo a tus amigos'
+                ],
+                correct: 2
+            },
+            {
+                question: '¿Qué es la sextorsión?',
+                options: [
+                    'Un tipo de videojuego',
+                    'Chantaje usando imágenes o videos íntimos',
+                    'Una aplicación de mensajería',
+                    'Un método de estudio'
+                ],
+                correct: 1
+            },
+            {
+                question: 'Un desconocido te pide fotos por internet. ¿Qué haces?',
+                options: [
+                    'Envío fotos sin mi cara',
+                    'Le pregunto por qué las quiere',
+                    'Bloqueo, reporto e informo a un adulto',
+                    'Acepto si me promete no compartirlas'
+                ],
+                correct: 2
+            },
+            {
+                question: '¿Cuál es una señal de grooming?',
+                options: [
+                    'Alguien te pregunta sobre tus hobbies',
+                    'Un adulto te pide que guardes el secreto de vuestra conversación',
+                    'Te invitan a jugar online',
+                    'Recibes recomendaciones de series'
+                ],
+                correct: 1
+            },
+            {
+                question: '¿Qué debes hacer si presencias ciberacoso hacia otra persona?',
+                options: [
+                    'Participar para no quedar fuera',
+                    'No hacer nada, no es mi problema',
+                    'Apoyar a la víctima y reportar el acoso',
+                    'Compartirlo con más personas'
+                ],
+                correct: 2
+            },
+            {
+                question: '¿Cuál NO es una buena práctica de seguridad?',
+                options: [
+                    'Usar la misma contraseña para todas las cuentas',
+                    'Activar la autenticación de dos factores',
+                    'Configurar la privacidad en redes sociales',
+                    'Verificar URLs antes de hacer clic'
+                ],
+                correct: 0
+            },
+            {
+                question: 'Si alguien suplanta tu identidad creando un perfil falso, debes:',
+                options: [
+                    'Ignorarlo completamente',
+                    'Crear otro perfil falso de esa persona',
+                    'Reportar el perfil falso y denunciar si es necesario',
+                    'Pedirle amablemente que lo elimine'
+                ],
+                correct: 2
+            }
+        ];
+
+        let userAnswers = [];
+
+        function initQuiz() {
+            const container = document.getElementById('quizQuestions');
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            
+            container.innerHTML = quizQuestions.map((q, index) => `
+                <div class="question" id="question${index}">
+                    <h3>Pregunta ${index + 1}: ${q.question}</h3>
+                    <div class="options">
+                        ${q.options.map((opt, optIndex) => `
+                            <div class="option" onclick="selectAnswer(${index}, ${optIndex})">
+                                ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function selectAnswer(questionIndex, optionIndex) {
+            const questionDiv = document.getElementById(`question${questionIndex}`);
+            const options = questionDiv.querySelectorAll('.option');
+            
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            userAnswers[questionIndex] = optionIndex;
+        }
+
+        function checkQuizAnswers() {
+            let correct = 0;
+            const feedbackDiv = document.getElementById('quizFeedback');
+            
+            quizQuestions.forEach((q, index) => {
+                const questionDiv = document.getElementById(`question${index}`);
+                const options = questionDiv.querySelectorAll('.option');
+                
+                options.forEach((opt, optIndex) => {
+                    opt.classList.remove('correct', 'incorrect');
+                    if (optIndex === q.correct) {
+                        opt.classList.add('correct');
+                    } else if (optIndex === userAnswers[index]) {
+                        opt.classList.add('incorrect');
+                    }
+                });
+                
+                if (userAnswers[index] === q.correct) {
+                    correct++;
+                }
+            });
+            
+            const percentage = (correct / quizQuestions.length) * 100;
+            let feedbackClass = 'info';
+            let message = '';
+            
+            if (percentage >= 80) {
+                feedbackClass = 'success';
+                message = `¡Excelente! Has respondido correctamente ${correct} de ${quizQuestions.length} preguntas (${percentage.toFixed(0)}%). Tienes un conocimiento sólido sobre seguridad digital.`;
+            } else if (percentage >= 60) {
+                feedbackClass = 'info';
+                message = `Bien. Has respondido correctamente ${correct} de ${quizQuestions.length} preguntas (${percentage.toFixed(0)}%). Revisa las respuestas incorrectas para mejorar.`;
+            } else {
+                feedbackClass = 'error';
+                message = `Has respondido correctamente ${correct} de ${quizQuestions.length} preguntas (${percentage.toFixed(0)}%). Te recomendamos revisar el material completo.`;
+            }
+            
+            feedbackDiv.className = `feedback ${feedbackClass} show`;
+            feedbackDiv.innerHTML = message;
+        }
+
+        function resetQuiz() {
+            userAnswers = new Array(quizQuestions.length).fill(null);
+            document.getElementById('quizFeedback').className = 'feedback';
+            initQuiz();
+        }
+
+        // Actividad de síntesis (drag and drop)
+        const synthesisItems = [
+            { text: 'Te envían mensajes insultantes todos los días durante semanas', category: 'ciberacoso' },
+            { text: 'Alguien amenaza con publicar fotos tuyas si no le envías dinero', category: 'sextorsion' },
+            { text: 'Crean un perfil falso usando tus fotos y datos personales', category: 'suplantacion' },
+            { text: 'Un adulto te pide que le envíes fotos en bañador', category: 'grooming' },
+            { text: 'Publican rumores falsos sobre ti en redes sociales', category: 'ciberacoso' },
+            { text: 'Te chantajean con un video íntimo para que hagas lo que quieren', category: 'sextorsion' },
+            { text: 'Alguien accede a tu cuenta de email y envía mensajes en tu nombre', category: 'suplantacion' },
+            { text: 'Un desconocido te ofrece regalos si te encuentras con él en persona', category: 'grooming' }
+        ];
+
+        function initSynthesis() {
+            const itemsPool = document.getElementById('draggableItems');
+            const shuffled = [...synthesisItems].sort(() => Math.random() - 0.5);
+            
+            itemsPool.innerHTML = shuffled.map((item, index) => `
+                <div class="draggable-item" draggable="true" ondragstart="drag(event)" id="item${index}" data-category="${item.category}">
+                    ${item.text}
+                </div>
+            `).join('');
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+            ev.target.classList.add('dragging');
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            const draggedElement = document.getElementById(data);
+            
+            if (ev.target.classList.contains('category-zone')) {
+                ev.target.appendChild(draggedElement);
+            } else if (ev.target.parentElement.classList.contains('category-zone')) {
+                ev.target.parentElement.appendChild(draggedElement);
+            }
+            
+            draggedElement.classList.remove('dragging');
+        }
+
+        function checkSynthesis() {
+            let correct = 0;
+            const feedbackDiv = document.getElementById('synthesisFeedback');
+            
+            synthesisItems.forEach((item, index) => {
+                const element = document.getElementById(`item${index}`);
+                const parentZone = element.parentElement;
+                
+                if (parentZone.id === `zone-${item.category}`) {
+                    correct++;
+                    element.style.background = '#c6f6d5';
+                    element.style.borderColor = '#38a169';
+                } else {
+                    element.style.background = '#fed7d7';
+                    element.style.borderColor = '#e53e3e';
+                }
+            });
+            
+            const percentage = (correct / synthesisItems.length) * 100;
+            
+            if (percentage === 100) {
+                feedbackDiv.className = 'feedback success show';
+                feedbackDiv.innerHTML = '🎉 ¡Perfecto! Has clasificado todas las situaciones correctamente. Tienes un excelente entendimiento de los diferentes tipos de riesgos digitales.';
+            } else if (percentage >= 75) {
+                feedbackDiv.className = 'feedback info show';
+                feedbackDiv.innerHTML = `Has clasificado correctamente ${correct} de ${synthesisItems.length} situaciones (${percentage.toFixed(0)}%). ¡Muy bien! Revisa las marcadas en rojo para mejorar.`;
+            } else {
+                feedbackDiv.className = 'feedback error show';
+                feedbackDiv.innerHTML = `Has clasificado correctamente ${correct} de ${synthesisItems.length} situaciones (${percentage.toFixed(0)}%). Revisa la sección "Tipos de Riesgo" para mejorar tu comprensión.`;
+            }
+        }
+
+        function resetSynthesis() {
+            document.getElementById('synthesisFeedback').className = 'feedback';
+            initSynthesis();
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            initDetection();
+            initCases();
+            initQuiz();
+            initSynthesis();
+        });
+    </script>
+</body>
+</html>
