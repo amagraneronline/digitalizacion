@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datos Personales & Huella Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e17;
+    --surface: #1a1830;
+    --card: #23213a;
+    --accent1: #ff6b6b;
+    --accent2: #ffd166;
+    --accent3: #06d6a0;
+    --accent4: #118ab2;
+    --accent5: #c77dff;
+    --text: #fffffe;
+    --muted: #a7a9be;
+    --correct: #06d6a0;
+    --wrong: #ff6b6b;
+    --radius: 16px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* PARTICLES */
+  #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,23,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 2px solid var(--accent5);
+    padding: 12px 24px;
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  }
+  nav .logo { font-family: 'Space Mono', monospace; font-weight: 700; font-size: 1.1rem; color: var(--accent5); letter-spacing: -1px; }
+  nav .score-badge {
+    margin-left: auto; background: var(--card); border: 2px solid var(--accent2);
+    border-radius: 50px; padding: 6px 18px; font-weight: 800; color: var(--accent2);
+    font-size: 0.95rem;
+  }
+
+  /* HERO */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center; padding: 64px 24px 48px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 6vw, 3.8rem); font-weight: 900; line-height: 1.1;
+    background: linear-gradient(135deg, var(--accent5) 0%, var(--accent1) 50%, var(--accent2) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .hero p { color: var(--muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 32px; }
+  .progress-bar-wrap { max-width: 500px; margin: 0 auto; background: var(--card); border-radius: 50px; height: 12px; overflow: hidden; border: 1px solid #333; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent5), var(--accent4)); border-radius: 50px; transition: width 0.5s ease; }
+  .progress-label { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+
+  /* SECTIONS */
+  .sections { position: relative; z-index: 1; max-width: 860px; margin: 0 auto; padding: 0 20px 80px; }
+  .section-header {
+    display: flex; align-items: center; gap: 14px;
+    margin: 48px 0 24px; cursor: pointer;
+    background: var(--card); border-radius: var(--radius); padding: 18px 24px;
+    border-left: 5px solid var(--accent5);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .section-header:hover { transform: translateX(4px); box-shadow: -4px 0 20px rgba(199,125,255,0.2); }
+  .section-header .icon { font-size: 2rem; }
+  .section-header h2 { font-size: 1.3rem; font-weight: 800; }
+  .section-header .tag {
+    margin-left: auto; background: var(--accent5); color: var(--bg);
+    border-radius: 50px; padding: 4px 12px; font-size: 0.75rem; font-weight: 700;
+  }
+  .section-content { display: none; animation: fadeIn 0.4s ease; }
+  .section-content.open { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* INFO CARD */
+  .info-card {
+    background: var(--surface); border-radius: var(--radius); padding: 20px 24px;
+    margin-bottom: 20px; border: 1px solid #2d2b4a;
+    position: relative; overflow: hidden;
+  }
+  .info-card::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+    background: linear-gradient(to bottom, var(--accent4), var(--accent3));
+  }
+  .info-card h3 { font-size: 1rem; font-weight: 800; color: var(--accent3); margin-bottom: 8px; }
+  .info-card p { font-size: 0.95rem; color: var(--muted); line-height: 1.7; }
+  .info-card ul { padding-left: 20px; color: var(--muted); font-size: 0.95rem; line-height: 2; }
+  .info-card .tag-list { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .info-card .tag-chip {
+    background: rgba(6,214,160,0.15); color: var(--accent3);
+    border: 1px solid var(--accent3); border-radius: 50px;
+    padding: 4px 14px; font-size: 0.8rem; font-weight: 700;
+  }
+  .info-card .tag-chip.red { background: rgba(255,107,107,0.15); color: var(--accent1); border-color: var(--accent1); }
+  .info-card .tag-chip.yellow { background: rgba(255,209,102,0.15); color: var(--accent2); border-color: var(--accent2); }
+  .info-card .tag-chip.blue { background: rgba(17,138,178,0.15); color: var(--accent4); border-color: var(--accent4); }
+  .info-card .tag-chip.purple { background: rgba(199,125,255,0.15); color: var(--accent5); border-color: var(--accent5); }
+
+  /* ACTIVITIES */
+  .activity {
+    background: var(--card); border-radius: var(--radius); padding: 28px;
+    margin-bottom: 24px; border: 1px solid #2d2b4a;
+  }
+  .activity-label {
+    font-family: 'Space Mono', monospace; font-size: 0.7rem; font-weight: 700;
+    color: var(--accent2); letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .activity h3 { font-size: 1.1rem; font-weight: 800; margin-bottom: 20px; line-height: 1.5; }
+
+  /* OPTIONS */
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .option-btn {
+    background: var(--surface); border: 2px solid #2d2b4a; border-radius: 12px;
+    padding: 14px 18px; color: var(--text); font-family: 'Nunito', sans-serif;
+    font-size: 0.95rem; font-weight: 600; text-align: left; cursor: pointer;
+    transition: all 0.2s; display: flex; align-items: center; gap: 12px;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--accent5); background: rgba(199,125,255,0.08); transform: translateX(4px); }
+  .option-btn.correct { border-color: var(--correct); background: rgba(6,214,160,0.12); color: var(--correct); }
+  .option-btn.wrong { border-color: var(--wrong); background: rgba(255,107,107,0.12); color: var(--wrong); }
+  .option-btn .opt-letter {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid currentColor;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+  }
+  .option-btn:disabled { cursor: default; }
+
+  /* FEEDBACK */
+  .feedback {
+    display: none; margin-top: 16px; padding: 14px 18px;
+    border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .feedback.show { display: flex; align-items: center; gap: 10px; }
+  .feedback.correct-fb { background: rgba(6,214,160,0.15); color: var(--correct); border: 1px solid var(--correct); }
+  .feedback.wrong-fb { background: rgba(255,107,107,0.15); color: var(--wrong); border: 1px solid var(--wrong); }
+  @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  /* DRAG & DROP */
+  .drag-area { display: flex; gap: 20px; flex-wrap: wrap; }
+  .drag-terms { flex: 1; min-width: 200px; }
+  .drag-defs { flex: 2; min-width: 280px; }
+  .drag-term {
+    background: var(--surface); border: 2px solid var(--accent5);
+    border-radius: 10px; padding: 10px 14px;
+    font-weight: 700; font-size: 0.9rem; cursor: grab;
+    margin-bottom: 10px; user-select: none; color: var(--accent5);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .drag-term:active { cursor: grabbing; transform: scale(1.05); box-shadow: 0 8px 24px rgba(199,125,255,0.3); }
+  .drag-term.placed { opacity: 0.4; cursor: default; }
+  .drop-zone {
+    background: var(--surface); border: 2px dashed #444; border-radius: 10px;
+    padding: 12px 14px; margin-bottom: 10px; min-height: 50px;
+    font-size: 0.9rem; color: var(--muted); line-height: 1.5;
+    transition: border-color 0.2s, background 0.2s;
+    position: relative;
+  }
+  .drop-zone.drag-over { border-color: var(--accent5); background: rgba(199,125,255,0.08); }
+  .drop-zone .def-text { font-size: 0.88rem; color: var(--muted); margin-bottom: 8px; }
+  .drop-zone .placed-term {
+    display: inline-block; background: rgba(199,125,255,0.2);
+    color: var(--accent5); border-radius: 6px; padding: 4px 10px;
+    font-weight: 700; font-size: 0.85rem; margin-top: 4px;
+  }
+  .drop-zone.correct-drop { border-color: var(--correct); background: rgba(6,214,160,0.1); }
+  .drop-zone.wrong-drop { border-color: var(--wrong); background: rgba(255,107,107,0.1); }
+  .check-btn {
+    background: linear-gradient(135deg, var(--accent4), var(--accent5));
+    border: none; border-radius: 50px; padding: 12px 32px;
+    color: white; font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800;
+    cursor: pointer; margin-top: 16px; transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .check-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17,138,178,0.4); }
+  .check-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+  /* CASE STUDY */
+  .case-box {
+    background: rgba(17,138,178,0.1); border: 1px solid var(--accent4);
+    border-radius: 12px; padding: 18px; margin-bottom: 20px; font-size: 0.95rem;
+    line-height: 1.8; color: var(--text);
+  }
+  .case-box .case-icon { font-size: 1.5rem; margin-bottom: 8px; }
+  .highlight { background: rgba(255,209,102,0.25); color: var(--accent2); border-radius: 4px; padding: 1px 6px; font-weight: 700; }
+
+  /* TRUE/FALSE */
+  .tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 480px) { .tf-grid { grid-template-columns: 1fr; } }
+
+  /* ORDER ACTIVITY */
+  .order-list { list-style: none; }
+  .order-item {
+    background: var(--surface); border: 2px solid #2d2b4a; border-radius: 10px;
+    padding: 12px 16px; margin-bottom: 8px; cursor: grab;
+    display: flex; align-items: center; gap: 12px; font-size: 0.95rem; font-weight: 600;
+    user-select: none; transition: border-color 0.2s;
+  }
+  .order-item:hover { border-color: var(--accent4); }
+  .order-item.dragging { opacity: 0.5; }
+  .order-num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent4); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 0.8rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* EGOSURFING */
+  .ego-demo {
+    background: white; border-radius: 12px; padding: 16px; margin-bottom: 16px;
+  }
+  .ego-search-bar {
+    display: flex; align-items: center; gap: 10px;
+    background: #f1f3f4; border-radius: 50px; padding: 10px 16px;
+    border: 1px solid #dadce0;
+  }
+  .ego-search-bar input {
+    border: none; background: transparent; font-size: 0.95rem;
+    color: #333; flex: 1; outline: none;
+  }
+  .ego-results { margin-top: 12px; }
+  .ego-result-item { padding: 10px 0; border-bottom: 1px solid #e8eaed; }
+  .ego-result-item:last-child { border-bottom: none; }
+  .ego-result-item .url { font-size: 0.75rem; color: #1a73e8; margin-bottom: 2px; }
+  .ego-result-item .title { font-size: 0.95rem; font-weight: 600; color: #1a0dab; margin-bottom: 4px; }
+  .ego-result-item .snippet { font-size: 0.85rem; color: #4d5156; }
+
+  /* RESULTS */
+  .results-panel {
+    background: linear-gradient(135deg, var(--card), var(--surface));
+    border: 2px solid var(--accent2); border-radius: var(--radius);
+    padding: 40px; text-align: center; margin-top: 48px; position: relative; z-index: 1;
+    display: none;
+  }
+  .results-panel.show { display: block; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  .results-panel .big-score {
+    font-size: 5rem; font-weight: 900; line-height: 1;
+    background: linear-gradient(135deg, var(--accent2), var(--accent1));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .results-panel p { color: var(--muted); margin: 12px 0; font-size: 1.05rem; }
+  .restart-btn {
+    background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    border: none; border-radius: 50px; padding: 14px 40px;
+    color: var(--bg); font-family: 'Nunito', sans-serif; font-size: 1rem; font-weight: 800;
+    cursor: pointer; margin-top: 20px; transition: transform 0.2s;
+  }
+  .restart-btn:hover { transform: scale(1.05); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .drag-area { flex-direction: column; }
+    .hero h1 { font-size: 2rem; }
+  }
+
+  /* CONFETTI EFFECT */
+  .confetti-piece {
+    position: fixed; width: 10px; height: 10px; border-radius: 2px;
+    animation: confettiFall 2s ease-in forwards;
+    pointer-events: none; z-index: 9999;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .section-divider {
+    height: 2px; background: linear-gradient(90deg, transparent, var(--accent5), transparent);
+    margin: 8px 0;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<nav>
+  <div class="logo">🔐 DataPrivacy EDU</div>
+  <div class="score-badge">⭐ Puntos: <span id="score">0</span></div>
+</nav>
+
+<div class="hero">
+  <h1>Datos Personales &amp; Huella Digital</h1>
+  <p>¡Aprende a proteger tu identidad en el mundo digital! Completa todas las actividades para ganar puntos.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label"><span id="progressText">0 / 0 actividades completadas</span></div>
+</div>
+
+<div class="sections" id="mainContent">
+
+  <!-- ===== SECCIÓN 1: DATOS PERSONALES ===== -->
+  <div class="section-header" onclick="toggleSection('s1')">
+    <span class="icon">🪪</span>
+    <h2>¿Qué son los Datos Personales?</h2>
+    <span class="tag">4 actividades</span>
+  </div>
+  <div class="section-content open" id="s1">
+
+    <div class="info-card">
+      <h3>📖 Definición</h3>
+      <p>Los <strong>datos personales</strong> son cualquier información que permita identificar a una persona, ya sea directa o indirectamente. Incluyen el nombre, DNI, dirección, correo electrónico, número de teléfono, fotografías, IP del dispositivo, etc.</p>
+      <div class="tag-list">
+        <span class="tag-chip">Nombre</span>
+        <span class="tag-chip">Dirección</span>
+        <span class="tag-chip red">DNI / Pasaporte</span>
+        <span class="tag-chip yellow">Email</span>
+        <span class="tag-chip blue">IP</span>
+        <span class="tag-chip purple">Fotografía</span>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>📂 Tipos de datos personales</h3>
+      <ul>
+        <li><strong>Datos básicos identificativos:</strong> nombre, dirección, teléfono, email, fecha de nacimiento.</li>
+        <li><strong>Datos especialmente protegidos:</strong> salud, ideología, religión, orientación sexual, origen racial.</li>
+        <li><strong>Datos económicos:</strong> cuenta bancaria, nómina, deudas.</li>
+        <li><strong>Datos digitales:</strong> dirección IP, cookies, historial de navegación.</li>
+      </ul>
+    </div>
+
+    <!-- ACTIVIDAD 1: Clasificar -->
+    <div class="activity" id="act1">
+      <div class="activity-label">🎯 Actividad 1 · Selección múltiple</div>
+      <h3>¿Cuáles de los siguientes son considerados datos personales? (selecciona TODOS los correctos)</h3>
+      <div class="options" id="act1options"></div>
+      <div class="feedback" id="act1fb"></div>
+    </div>
+
+    <!-- ACTIVIDAD 2: Verdadero/Falso -->
+    <div class="activity" id="act2">
+      <div class="activity-label">✅ Actividad 2 · Verdadero o Falso</div>
+      <h3>Indica si las siguientes afirmaciones son verdaderas o falsas:</h3>
+      <div id="tfContainer2"></div>
+      <button class="check-btn" id="checkTF2" onclick="checkTF(2)">Comprobar respuestas</button>
+      <div class="feedback" id="act2fb"></div>
+    </div>
+
+  </div>
+
+  <!-- ===== SECCIÓN 2: PROTEGER DATOS ===== -->
+  <div class="section-header" onclick="toggleSection('s2')" style="border-left-color: var(--accent3);">
+    <span class="icon">🛡️</span>
+    <h2>¿Cómo proteger los datos personales?</h2>
+    <span class="tag" style="background: var(--accent3);">3 actividades</span>
+  </div>
+  <div class="section-content" id="s2">
+
+    <div class="info-card">
+      <h3>🔒 Consejos de protección</h3>
+      <ul>
+        <li>Usa <strong>contraseñas fuertes y únicas</strong> para cada cuenta.</li>
+        <li>Activa la <strong>verificación en dos pasos</strong> siempre que sea posible.</li>
+        <li>Lee las <strong>políticas de privacidad</strong> antes de aceptar.</li>
+        <li>No compartas datos personales en redes sociales públicas.</li>
+        <li>Usa <strong>redes WiFi seguras</strong> y evita las públicas para datos sensibles.</li>
+        <li>Mantén actualizados tus dispositivos y antivirus.</li>
+        <li>Conoce tu <strong>derecho ARCO</strong>: Acceso, Rectificación, Cancelación, Oposición.</li>
+      </ul>
+    </div>
+
+    <!-- ACTIVIDAD 3: Caso práctico -->
+    <div class="activity" id="act3">
+      <div class="activity-label">📖 Actividad 3 · Caso práctico</div>
+      <div class="case-box">
+        <div class="case-icon">📱</div>
+        <strong>Caso de Lucía:</strong><br>
+        Lucía acaba de descargar una aplicación de juegos gratuita. Al abrirla, le pide permiso para acceder a: <span class="highlight">sus contactos</span>, <span class="highlight">su ubicación en tiempo real</span>, <span class="highlight">su micrófono</span> y <span class="highlight">su cámara</span>. Lucía acepta todo sin leerlo porque quiere jugar rápido.
+      </div>
+      <h3>¿Qué debería hacer Lucía para proteger mejor sus datos personales?</h3>
+      <div class="options" id="act3options"></div>
+      <div class="feedback" id="act3fb"></div>
+    </div>
+
+    <!-- ACTIVIDAD 4: Ordenar pasos -->
+    <div class="activity" id="act4">
+      <div class="activity-label">🔢 Actividad 4 · Elige la correcta</div>
+      <h3>¿Cuál es una característica de una contraseña SEGURA?</h3>
+      <div class="options" id="act4options"></div>
+      <div class="feedback" id="act4fb"></div>
+    </div>
+
+  </div>
+
+  <!-- ===== SECCIÓN 3: HUELLA DIGITAL ===== -->
+  <div class="section-header" onclick="toggleSection('s3')" style="border-left-color: var(--accent2);">
+    <span class="icon">👣</span>
+    <h2>¿Qué es la Huella Digital?</h2>
+    <span class="tag" style="background: var(--accent2); color: var(--bg);">4 actividades</span>
+  </div>
+  <div class="section-content" id="s3">
+
+    <div class="info-card">
+      <h3>🌐 Definición de Huella Digital</h3>
+      <p>La <strong>huella digital</strong> es el rastro de información que dejamos al usar internet y dispositivos digitales. Todo lo que hacemos online queda registrado de alguna forma.</p>
+    </div>
+
+    <div class="info-card">
+      <h3>🔍 Tipos de huella digital</h3>
+      <ul>
+        <li><strong>Huella activa:</strong> información que compartimos voluntariamente (fotos, comentarios, publicaciones en redes).</li>
+        <li><strong>Huella pasiva:</strong> datos recopilados sin que seamos conscientes (cookies, historial, IP, tiempo de uso).</li>
+      </ul>
+    </div>
+
+    <!-- ACTIVIDAD 5: Relacionar - DRAG & DROP -->
+    <div class="activity" id="act5">
+      <div class="activity-label">🔗 Actividad 5 · Une definición con concepto</div>
+      <h3>Arrastra cada término a su definición correcta:</h3>
+      <div class="drag-area">
+        <div class="drag-terms" id="dragTerms">
+          <div class="drag-term" draggable="true" id="dt_activa" ondragstart="dragStart(event,'Huella Activa')">👆 Huella Activa</div>
+          <div class="drag-term" draggable="true" id="dt_pasiva" ondragstart="dragStart(event,'Huella Pasiva')">👁️ Huella Pasiva</div>
+          <div class="drag-term" draggable="true" id="dt_cookie" ondragstart="dragStart(event,'Cookie')">🍪 Cookie</div>
+          <div class="drag-term" draggable="true" id="dt_ip" ondragstart="dragStart(event,'Dirección IP')">🌐 Dirección IP</div>
+        </div>
+        <div class="drag-defs" id="dropZones">
+          <div class="drop-zone" id="dz1" ondragover="allowDrop(event)" ondrop="dropTerm(event,'dz1','Huella Activa')">
+            <div class="def-text">Información que el usuario publica voluntariamente: fotos, comentarios, likes...</div>
+          </div>
+          <div class="drop-zone" id="dz2" ondragover="allowDrop(event)" ondrop="dropTerm(event,'dz2','Huella Pasiva')">
+            <div class="def-text">Datos recopilados automáticamente sin que el usuario lo decida conscientemente.</div>
+          </div>
+          <div class="drop-zone" id="dz3" ondragover="allowDrop(event)" ondrop="dropTerm(event,'dz3','Cookie')">
+            <div class="def-text">Pequeño archivo que guarda información sobre tu navegación en un sitio web.</div>
+          </div>
+          <div class="drop-zone" id="dz4" ondragover="allowDrop(event)" ondrop="dropTerm(event,'dz4','Dirección IP')">
+            <div class="def-text">Número único que identifica tu dispositivo en internet, como una matrícula virtual.</div>
+          </div>
+        </div>
+      </div>
+      <button class="check-btn" id="checkDrag5" onclick="checkDragDrop()">Comprobar coincidencias</button>
+      <div class="feedback" id="act5fb"></div>
+    </div>
+
+    <!-- ACTIVIDAD 6: Caso huella digital -->
+    <div class="activity" id="act6">
+      <div class="activity-label">📖 Actividad 6 · Identifica el tipo</div>
+      <div class="case-box">
+        <div class="case-icon">🎮</div>
+        <strong>El caso de Marcos:</strong><br>
+        Marcos usa su tablet para: <span class="highlight">buscar vídeos en YouTube</span>, <span class="highlight">publicar fotos en Instagram</span>, <span class="highlight">comprar en una tienda online</span> y <span class="highlight">jugar a un videojuego online</span>. La plataforma de YouTube registra automáticamente cuánto tiempo ve cada vídeo sin que Marcos lo sepa.
+      </div>
+      <h3>El registro automático que hace YouTube del tiempo de visualización de Marcos es un ejemplo de...</h3>
+      <div class="options" id="act6options"></div>
+      <div class="feedback" id="act6fb"></div>
+    </div>
+
+  </div>
+
+  <!-- ===== SECCIÓN 4: EGOSURFING ===== -->
+  <div class="section-header" onclick="toggleSection('s4')" style="border-left-color: var(--accent1);">
+    <span class="icon">🔎</span>
+    <h2>¿Qué es el Egosurfing?</h2>
+    <span class="tag" style="background: var(--accent1);">3 actividades</span>
+  </div>
+  <div class="section-content" id="s4">
+
+    <div class="info-card">
+      <h3>🔎 Definición de Egosurfing</h3>
+      <p>El <strong>egosurfing</strong> (también llamado <em>egooglear</em> o <em>vanity search</em>) consiste en buscarse a uno mismo en internet para conocer qué información hay disponible sobre nosotros. Es una práctica recomendada para controlar nuestra identidad digital.</p>
+    </div>
+
+    <div class="info-card">
+      <h3>✅ ¿Para qué sirve el egosurfing?</h3>
+      <ul>
+        <li>Descubrir qué información tuya es pública en internet.</li>
+        <li>Detectar si alguien está usando tu nombre o fotos sin permiso.</li>
+        <li>Conocer qué ve un empleador o desconocido al buscarte.</li>
+        <li>Solicitar la eliminación de datos inexactos o dañinos (derecho al olvido).</li>
+        <li>Gestionar y mejorar tu reputación digital.</li>
+      </ul>
+    </div>
+
+    <!-- DEMO EGOSURFING -->
+    <div class="info-card" style="border-left: none; background: rgba(17,138,178,0.05);">
+      <h3>🖥️ Así se vería una búsqueda de egosurfing</h3>
+      <div class="ego-demo">
+        <div class="ego-search-bar">
+          <span>🔍</span>
+          <input type="text" value='"Ana García López" site:es' readonly>
+        </div>
+        <div class="ego-results">
+          <div class="ego-result-item">
+            <div class="url">linkedin.com › in › ana-garcia-lopez</div>
+            <div class="title">Ana García López - Profesora de Secundaria | LinkedIn</div>
+            <div class="snippet">Ana García López · Instituto XYZ · Málaga, España · 342 seguidores...</div>
+          </div>
+          <div class="ego-result-item">
+            <div class="url">twitter.com › anagarcia_92</div>
+            <div class="title">Ana García (@anagarcia_92) / Twitter</div>
+            <div class="snippet">Fotos, opiniones y datos personales visibles para todos...</div>
+          </div>
+          <div class="ego-result-item">
+            <div class="url">forocoches.com › thread › 1234</div>
+            <div class="title">¿Conocéis a Ana García de Málaga? Sus datos...</div>
+            <div class="snippet">⚠️ Alerta: información personal publicada sin consentimiento.</div>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:0.85rem; color: var(--accent1); margin-top: 8px;">⚠️ El tercer resultado es un ejemplo de situación a denunciar y gestionar.</p>
+    </div>
+
+    <!-- ACTIVIDAD 7: Relacionar -->
+    <div class="activity" id="act7">
+      <div class="activity-label">🎯 Actividad 7 · Selección múltiple</div>
+      <h3>¿Cuáles son razones VÁLIDAS para practicar el egosurfing? (selecciona todos los correctos)</h3>
+      <div class="options" id="act7options"></div>
+      <div class="feedback" id="act7fb"></div>
+    </div>
+
+    <!-- ACTIVIDAD 8: Caso final -->
+    <div class="activity" id="act8">
+      <div class="activity-label">📖 Actividad 8 · Caso práctico final</div>
+      <div class="case-box">
+        <div class="case-icon">💼</div>
+        <strong>El caso de David:</strong><br>
+        David tiene 17 años y busca su primer empleo. Se busca en Google y descubre que tiene comentarios agresivos en foros, fotos comprometedoras de hace 3 años y sus datos de contacto en un directorio público.
+      </div>
+      <h3>¿Cuál es el paso MÁS importante que debería dar David primero?</h3>
+      <div class="options" id="act8options"></div>
+      <div class="feedback" id="act8fb"></div>
+    </div>
+
+    <!-- ACTIVIDAD 9: Definiciones - matching final -->
+    <div class="activity" id="act9">
+      <div class="activity-label">🏆 Actividad Final · Repaso general</div>
+      <h3>Une cada término con su definición correcta:</h3>
+      <div id="matchContainer"></div>
+      <button class="check-btn" onclick="checkMatch()">Comprobar respuestas</button>
+      <div class="feedback" id="act9fb"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- RESULTS -->
+<div class="results-panel" id="resultsPanel">
+  <div style="font-size:3rem; margin-bottom:16px;">🏆</div>
+  <div class="big-score" id="finalScore">0</div>
+  <p>puntos de <span id="maxScore">0</span> posibles</p>
+  <p id="resultMsg"></p>
+  <button class="restart-btn" onclick="restart()">🔄 Volver a intentarlo</button>
+</div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let score = 0;
+let completedActivities = new Set();
+const totalActivities = 9;
+const dragData = {};
+const dropState = {};
+
+// ============================================================
+// SECTION TOGGLE
+// ============================================================
+function toggleSection(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('open');
+}
+
+// ============================================================
+// SCORE & PROGRESS
+// ============================================================
+function addScore(pts) {
+  score += pts;
+  document.getElementById('score').textContent = score;
+}
+function markComplete(actId) {
+  if (!completedActivities.has(actId)) {
+    completedActivities.add(actId);
+    const pct = Math.round((completedActivities.size / totalActivities) * 100);
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressText').textContent =
+      completedActivities.size + ' / ' + totalActivities + ' actividades completadas';
+    if (completedActivities.size === totalActivities) showResults();
+  }
+}
+
+// ============================================================
+// GENERIC OPTION RENDERER
+// ============================================================
+function renderOptions(containerId, options, correctIndexes, actId, multi) {
+  const c = document.getElementById(containerId);
+  c.innerHTML = '';
+  const letters = ['A','B','C','D','E','F','G','H'];
+  const selected = new Set();
+  const btns = [];
+
+  options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span>${opt.text}`;
+    btn.onclick = () => {
+      if (multi) {
+        // Multi-select: toggle
+        if (selected.has(i)) { selected.delete(i); btn.style.borderColor = ''; btn.style.background = ''; }
+        else { selected.add(i); btn.style.borderColor = 'var(--accent5)'; btn.style.background = 'rgba(199,125,255,0.1)'; }
+      } else {
+        // Single select: answer immediately
+        btns.forEach(b => b.disabled = true);
+        const correct = correctIndexes.includes(i);
+        btn.classList.add(correct ? 'correct' : 'wrong');
+        if (!correct) {
+          correctIndexes.forEach(ci => btns[ci].classList.add('correct'));
+        }
+        showFeedback(actId + 'fb', correct, opt.explanation || '');
+        if (correct) { addScore(10); }
+        markComplete(actId);
+      }
+    };
+    c.appendChild(btn);
+    btns.push(btn);
+  });
+
+  if (multi) {
+    const submitBtn = document.createElement('button');
+    submitBtn.className = 'check-btn';
+    submitBtn.style.marginTop = '16px';
+    submitBtn.textContent = 'Comprobar selección';
+    submitBtn.onclick = () => {
+      btns.forEach(b => b.disabled = true);
+      submitBtn.disabled = true;
+      let allCorrect = true;
+      btns.forEach((btn, i) => {
+        const isCorrect = correctIndexes.includes(i);
+        const isSelected = selected.has(i);
+        if (isCorrect) btn.classList.add('correct');
+        if (isSelected && !isCorrect) { btn.classList.add('wrong'); allCorrect = false; }
+        if (isCorrect && !isSelected) allCorrect = false;
+      });
+      showFeedback(actId + 'fb', allCorrect, allCorrect ? '¡Perfecto! Identificaste todos los datos personales correctamente.' : 'Revisa las respuestas marcadas en verde. Algunas selecciones eran incorrectas o faltaban.');
+      if (allCorrect) addScore(15);
+      markComplete(actId);
+    };
+    c.appendChild(submitBtn);
+  }
+}
+
+// ============================================================
+// FEEDBACK
+// ============================================================
+function showFeedback(id, correct, msg) {
+  const el = document.getElementById(id);
+  el.className = 'feedback show ' + (correct ? 'correct-fb' : 'wrong-fb');
+  el.innerHTML = (correct ? '✅ ¡Correcto! ' : '❌ Incorrecto. ') + msg;
+  if (correct) confetti();
+}
+
+// ============================================================
+// ACTIVITY 1: multi-select datos personales
+// ============================================================
+const act1Data = [
+  { text: 'Tu nombre completo', correct: true },
+  { text: 'El color favorito de un personaje de ficción', correct: false },
+  { text: 'Tu número de teléfono', correct: true },
+  { text: 'La capital de Francia', correct: false },
+  { text: 'Tu dirección IP', correct: true },
+  { text: 'Tu fotografía', correct: true },
+];
+const act1Correct = act1Data.map((d,i) => d.correct ? i : null).filter(i => i !== null);
+renderOptions('act1options', act1Data, act1Correct, 'act1', true);
+
+// ============================================================
+// ACTIVITY 2: True/False
+// ============================================================
+const tfData2 = [
+  { text: 'El DNI es un dato personal especialmente protegido.', answer: false, explanation: 'FALSO. El DNI es un dato básico identificativo. Los datos "especialmente protegidos" son categorías sensibles como: salud, ideología política, religión, orientación sexual u origen racial. Estos tienen mayor nivel de protección legal por el posible daño que causaría su difusión.' },
+  { text: 'La dirección IP de tu dispositivo es considerada un dato personal.', answer: true, explanation: '¡Correcto! La IP permite identificar tu dispositivo y está protegida por las leyes de privacidad.' },
+  { text: 'Puedes compartir tu contraseña con amigos de confianza sin ningún riesgo.', answer: false, explanation: 'Nunca se deben compartir contraseñas. Incluso con amigos de confianza supone un riesgo de seguridad.' },
+  { text: 'Los datos de salud tienen mayor protección legal que el nombre y apellidos.', answer: true, explanation: '¡Correcto! Los datos de salud son "datos sensibles" y tienen una protección especial en el RGPD.' },
+];
+buildTF(2, tfData2);
+
+function buildTF(num, data) {
+  const c = document.getElementById('tfContainer' + num);
+  data.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px;background:var(--surface);border-radius:10px;padding:12px 16px;';
+    row.innerHTML = `
+      <span style="flex:1;font-size:0.92rem;">${item.text}</span>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="radio" name="tf${num}_${i}" value="true" style="accent-color:var(--accent3);"> ✅ Verdadero
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+        <input type="radio" name="tf${num}_${i}" value="false" style="accent-color:var(--accent1);"> ❌ Falso
+      </label>
+      <div id="tfResult${num}_${i}" style="font-size:1.2rem;min-width:24px;"></div>
+    `;
+    c.appendChild(row);
+  });
+}
+
+function checkTF(num) {
+  const data = num === 2 ? tfData2 : [];
+  let allCorrect = true; let allAnswered = true;
+  data.forEach((item, i) => {
+    const radios = document.querySelectorAll(`input[name="tf${num}_${i}"]`);
+    let val = null;
+    radios.forEach(r => { if (r.checked) val = r.value === 'true'; r.disabled = true; });
+    const res = document.getElementById(`tfResult${num}_${i}`);
+    if (val === null) { allAnswered = false; return; }
+    if (val === item.answer) { res.textContent = '✅'; }
+    else { res.textContent = '❌'; allCorrect = false; }
+  });
+  if (!allAnswered) { alert('Por favor, responde todas las preguntas.'); return; }
+  document.getElementById('checkTF' + num).disabled = true;
+  showFeedback('act' + num + 'fb', allCorrect,
+    allCorrect ? '¡Todas las respuestas son correctas!' : 'Hay algunas respuestas incorrectas. Revisa las marcadas con ❌.');
+  if (allCorrect) addScore(15);
+  markComplete('act' + num);
+}
+
+// ============================================================
+// ACTIVITY 3: Caso Lucía
+// ============================================================
+renderOptions('act3options', [
+  { text: 'Aceptar todos los permisos y jugar. Las apps siempre son seguras.', explanation: 'Las apps pueden usar mal los permisos para recopilar datos innecesarios.' },
+  { text: 'Revisar los permisos y conceder solo los necesarios para el juego (ninguno en este caso).', explanation: '¡Exacto! Un juego NO necesita acceder a contactos, ubicación, micrófono ni cámara.' },
+  { text: 'Borrar todos sus datos del móvil antes de instalar la app.', explanation: 'Eso no es necesario ni resuelve el problema de los permisos.' },
+  { text: 'Pagar la versión premium para que no recopile datos.', explanation: 'Pagar no garantiza que los datos estén protegidos.' },
+], [1], 'act3', false);
+
+// ============================================================
+// ACTIVITY 4: Contraseña segura
+// ============================================================
+renderOptions('act4options', [
+  { text: '12345678 — fácil de recordar', explanation: 'Las contraseñas numéricas simples son las primeras que se prueban en un ataque.' },
+  { text: 'tuNombre1990 — con tu año de nacimiento', explanation: 'Mezcla nombre y año pero sigue siendo predecible con información personal.' },
+  { text: 'K#9mP!qR2@xL — larga, con símbolos, números y letras mixtas', explanation: '¡Correcto! Longitud + variedad de caracteres = contraseña segura.' },
+  { text: 'password123 — la más usada del mundo', explanation: '¡Esa es la contraseña más hackeada del mundo! Nunca la uses.' },
+], [2], 'act4', false);
+
+// ============================================================
+// ACTIVITY 5: Drag & Drop
+// ============================================================
+function dragStart(event, term) {
+  event.dataTransfer.setData('text', term);
+}
+function allowDrop(event) {
+  event.preventDefault();
+  event.currentTarget.classList.add('drag-over');
+}
+document.querySelectorAll('.drop-zone').forEach(dz => {
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+});
+function dropTerm(event, zoneId, expectedTerm) {
+  event.preventDefault();
+  const zone = document.getElementById(zoneId);
+  zone.classList.remove('drag-over');
+  const term = event.dataTransfer.getData('text');
+  dropState[zoneId] = term;
+  // Update UI
+  let placed = zone.querySelector('.placed-term');
+  if (!placed) { placed = document.createElement('span'); placed.className = 'placed-term'; zone.appendChild(placed); }
+  placed.textContent = term;
+}
+function checkDragDrop() {
+  const correct = { dz1: 'Huella Activa', dz2: 'Huella Pasiva', dz3: 'Cookie', dz4: 'Dirección IP' };
+  let allCorrect = true;
+  Object.keys(correct).forEach(zoneId => {
+    const zone = document.getElementById(zoneId);
+    if (dropState[zoneId] === correct[zoneId]) {
+      zone.classList.add('correct-drop');
+    } else {
+      zone.classList.add('wrong-drop'); allCorrect = false;
+    }
+  });
+  document.getElementById('checkDrag5').disabled = true;
+  showFeedback('act5fb', allCorrect,
+    allCorrect ? '¡Excelente! Relacionaste todos los conceptos correctamente.' : 'Algunas relaciones son incorrectas. Las correctas: Huella Activa = lo que compartes tú, Pasiva = lo que se recoge automáticamente, Cookie = archivo de navegación, IP = identificador del dispositivo.');
+  if (allCorrect) addScore(20);
+  markComplete('act5');
+}
+
+// ============================================================
+// ACTIVITY 6: Caso Marcos
+// ============================================================
+renderOptions('act6options', [
+  { text: 'Huella digital activa, porque Marcos lo decidió voluntariamente.', explanation: 'No. Marcos no decidió que YouTube registrara ese dato. Fue automático.' },
+  { text: 'Huella digital pasiva, porque se recopila automáticamente sin decisión consciente de Marcos.', explanation: '¡Correcto! La huella pasiva es la que se genera sin que el usuario lo decida conscientemente.' },
+  { text: 'Publicidad personalizada, que no tiene nada que ver con la huella digital.', explanation: 'La publicidad personalizada sí está relacionada con la huella digital pasiva.' },
+  { text: 'Un dato personal básico identificativo.', explanation: 'Aunque es un dato personal, en este contexto se clasifica como huella digital pasiva.' },
+], [1], 'act6', false);
+
+// ============================================================
+// ACTIVITY 7: Egosurfing razones válidas
+// ============================================================
+const act7Data = [
+  { text: 'Descubrir qué información tuya es pública en internet', correct: true },
+  { text: 'Buscar fotos privadas de otras personas', correct: false },
+  { text: 'Detectar si alguien usa tu nombre sin permiso', correct: true },
+  { text: 'Ver qué impresión das a posibles empleadores', correct: true },
+  { text: 'Hackear cuentas que mencionan tu nombre', correct: false },
+  { text: 'Solicitar la eliminación de datos erróneos (derecho al olvido)', correct: true },
+];
+const act7Correct = act7Data.map((d,i) => d.correct ? i : null).filter(i => i !== null);
+renderOptions('act7options', act7Data, act7Correct, 'act7', true);
+
+// ============================================================
+// ACTIVITY 8: Caso David
+// ============================================================
+renderOptions('act8options', [
+  { text: 'Borrar todas sus redes sociales de inmediato.', explanation: 'Borrar todo no es necesario ni siempre posible. Primero hay que evaluar qué hacer.' },
+  { text: 'Ignorarlo, los empleadores no buscan a candidatos en internet.', explanation: 'Falso. El 70% de los empleadores buscan a candidatos en internet.' },
+  { text: 'Solicitar la eliminación del contenido dañino usando el derecho al olvido y contactar las plataformas.', explanation: '¡Correcto! El primer paso es actuar sobre el contenido más dañino usando sus derechos.' },
+  { text: 'Cambiar su nombre para que no le encuentren.', explanation: 'No es una solución práctica ni efectiva.' },
+], [2], 'act8', false);
+
+// ============================================================
+// ACTIVITY 9: Matching final
+// ============================================================
+const matchData = [
+  { term: 'Egosurfing', def: 'Buscarse a uno mismo en internet para conocer qué información hay disponible sobre nosotros.' },
+  { term: 'Huella digital', def: 'Rastro de información que dejamos al usar internet y dispositivos digitales.' },
+  { term: 'Dato personal', def: 'Cualquier información que permita identificar a una persona directa o indirectamente.' },
+  { term: 'Derecho ARCO', def: 'Derecho de Acceso, Rectificación, Cancelación y Oposición sobre los datos personales.' },
+  { term: 'Cookie', def: 'Pequeño archivo que guarda información sobre tu navegación en un sitio web.' },
+];
+const shuffledDefs = [...matchData].sort(() => Math.random() - 0.5);
+const matchAnswers = {};
+const matchContainer = document.getElementById('matchContainer');
+matchData.forEach((item, i) => {
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;align-items:center;gap:12px;margin-bottom:12px;';
+  const termEl = document.createElement('div');
+  termEl.style.cssText = 'background:rgba(199,125,255,0.15);color:var(--accent5);border:1px solid var(--accent5);border-radius:10px;padding:10px 14px;font-weight:800;font-size:0.9rem;min-width:140px;text-align:center;';
+  termEl.textContent = item.term;
+  const arrow = document.createElement('div');
+  arrow.textContent = '→'; arrow.style.color = 'var(--muted)';
+  const sel = document.createElement('select');
+  sel.style.cssText = 'flex:1;background:var(--surface);color:var(--text);border:2px solid #2d2b4a;border-radius:10px;padding:10px;font-family:Nunito,sans-serif;font-size:0.88rem;';
+  sel.innerHTML = '<option value="">— Selecciona la definición —</option>';
+  shuffledDefs.forEach((d, j) => {
+    const opt = document.createElement('option');
+    opt.value = d.def; opt.textContent = d.def;
+    sel.appendChild(opt);
+  });
+  sel.onchange = () => { matchAnswers[item.term] = sel.value; };
+  row.appendChild(termEl); row.appendChild(arrow); row.appendChild(sel);
+  matchContainer.appendChild(row);
+});
+
+function checkMatch() {
+  let allCorrect = true;
+  matchData.forEach(item => {
+    if (matchAnswers[item.term] !== item.def) allCorrect = false;
+  });
+  showFeedback('act9fb', allCorrect,
+    allCorrect ? '🎉 ¡Increíble! Dominaste todos los conceptos clave.' : 'Algunas relaciones no son correctas. Revisa las definiciones en las tarjetas de información.');
+  if (allCorrect) addScore(25);
+  markComplete('act9');
+}
+
+// ============================================================
+// RESULTS
+// ============================================================
+function showResults() {
+  const panel = document.getElementById('resultsPanel');
+  panel.classList.add('show');
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('maxScore').textContent = '100';
+  const pct = score;
+  let msg = '';
+  if (pct >= 80) msg = '🌟 ¡Eres un experto en privacidad digital!';
+  else if (pct >= 50) msg = '👍 Buen trabajo, pero aún hay algunos conceptos que repasar.';
+  else msg = '📚 Sigue practicando. ¡Vuelve a repasar los contenidos!';
+  document.getElementById('resultMsg').textContent = msg;
+  confettiShower();
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function restart() {
+  location.reload();
+}
+
+// ============================================================
+// CONFETTI
+// ============================================================
+const colors = ['#ff6b6b','#ffd166','#06d6a0','#118ab2','#c77dff'];
+function confetti() {
+  for (let i = 0; i < 12; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      top: -20px;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      transform: rotate(${Math.random() * 360}deg);
+      animation-delay: ${Math.random() * 0.5}s;
+    `;
+    document.body.appendChild(piece);
+    setTimeout(() => piece.remove(), 2500);
+  }
+}
+function confettiShower() {
+  for (let i = 0; i < 5; i++) setTimeout(confetti, i * 200);
+}
+
+// ============================================================
+// PARTICLES BACKGROUND
+// ============================================================
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+const particles = Array.from({ length: 60 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  vx: (Math.random() - 0.5) * 0.4,
+  vy: (Math.random() - 0.5) * 0.4,
+  r: Math.random() * 2 + 0.5,
+  color: colors[Math.floor(Math.random() * colors.length)],
+  alpha: Math.random() * 0.4 + 0.1,
+}));
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy;
+    if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+    if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = p.color + Math.floor(p.alpha * 255).toString(16).padStart(2,'0');
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+
+</body>
+</html>
