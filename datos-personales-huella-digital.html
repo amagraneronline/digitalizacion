@@ -566,6 +566,7 @@
 // ============================================================
 let score = 0;
 let completedActivities = new Set();
+const scoredActivities = new Set();
 const totalActivities = 9;
 const dragData = {};
 const dropState = {};
@@ -581,8 +582,10 @@ function toggleSection(id) {
 // ============================================================
 // SCORE & PROGRESS
 // ============================================================
-function addScore(pts) {
-  score += pts;
+function addScore(pts, actId) {
+  if (actId && scoredActivities.has(actId)) return;
+  if (actId) scoredActivities.add(actId);
+  score = Math.min(100, score + pts);
   document.getElementById('score').textContent = score;
 }
 function markComplete(actId) {
@@ -624,7 +627,7 @@ function renderOptions(containerId, options, correctIndexes, actId, multi) {
           correctIndexes.forEach(ci => btns[ci].classList.add('correct'));
         }
         showFeedback(actId + 'fb', correct, opt.explanation || '');
-        if (correct) { addScore(10); }
+        if (correct) { addScore(10, actId); }
         markComplete(actId);
       }
     };
@@ -649,7 +652,7 @@ function renderOptions(containerId, options, correctIndexes, actId, multi) {
         if (isCorrect && !isSelected) allCorrect = false;
       });
       showFeedback(actId + 'fb', allCorrect, allCorrect ? '¡Perfecto! Identificaste todos los datos personales correctamente.' : 'Revisa las respuestas marcadas en verde. Algunas selecciones eran incorrectas o faltaban.');
-      if (allCorrect) addScore(15);
+      if (allCorrect) addScore(15, actId);
       markComplete(actId);
     };
     c.appendChild(submitBtn);
@@ -723,10 +726,12 @@ function checkTF(num) {
     else { res.textContent = '❌'; allCorrect = false; }
   });
   if (!allAnswered) { alert('Por favor, responde todas las preguntas.'); return; }
-  document.getElementById('checkTF' + num).disabled = true;
+  const btn = document.getElementById('checkTF' + num);
+  if (btn.disabled) return;
+  btn.disabled = true;
   showFeedback('act' + num + 'fb', allCorrect,
     allCorrect ? '¡Todas las respuestas son correctas!' : 'Hay algunas respuestas incorrectas. Revisa las marcadas con ❌.');
-  if (allCorrect) addScore(15);
+  if (allCorrect) addScore(15, 'act' + num);
   markComplete('act' + num);
 }
 
@@ -785,10 +790,12 @@ function checkDragDrop() {
       zone.classList.add('wrong-drop'); allCorrect = false;
     }
   });
-  document.getElementById('checkDrag5').disabled = true;
+  const dragBtn = document.getElementById('checkDrag5');
+  if (dragBtn.disabled) return;
+  dragBtn.disabled = true;
   showFeedback('act5fb', allCorrect,
     allCorrect ? '¡Excelente! Relacionaste todos los conceptos correctamente.' : 'Algunas relaciones son incorrectas. Las correctas: Huella Activa = lo que compartes tú, Pasiva = lo que se recoge automáticamente, Cookie = archivo de navegación, IP = identificador del dispositivo.');
-  if (allCorrect) addScore(20);
+  if (allCorrect) addScore(20, 'act5');
   markComplete('act5');
 }
 
@@ -861,13 +868,16 @@ matchData.forEach((item, i) => {
 });
 
 function checkMatch() {
+  const matchBtn = document.querySelector('#act9 .check-btn');
+  if (matchBtn && matchBtn.disabled) return;
+  if (matchBtn) matchBtn.disabled = true;
   let allCorrect = true;
   matchData.forEach(item => {
     if (matchAnswers[item.term] !== item.def) allCorrect = false;
   });
   showFeedback('act9fb', allCorrect,
     allCorrect ? '🎉 ¡Increíble! Dominaste todos los conceptos clave.' : 'Algunas relaciones no son correctas. Revisa las definiciones en las tarjetas de información.');
-  if (allCorrect) addScore(25);
+  if (allCorrect) addScore(25, 'act9');
   markComplete('act9');
 }
 
