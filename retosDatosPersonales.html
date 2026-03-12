@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reto de Privacidad: 5 Casos Reales</title>
+    <style>
+        :root { --p: #4f46e5; --s: #10b981; --err: #ef4444; --bg: #f3f4f6; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); padding: 20px; color: #1f2937; margin: 0; }
+        .card { max-width: 850px; margin: 20px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; }
+        .case-image { width: 100%; height: 280px; object-fit: cover; border-bottom: 4px solid var(--p); }
+        .content { padding: 30px; }
+        .score-board { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        .progress-bar { height: 8px; background: #e5e7eb; border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
+        #progress-fill { height: 100%; background: linear-gradient(90deg, var(--p), var(--s)); width: 0%; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .scenario-box { background: #f0f4ff; padding: 20px; border-radius: 12px; margin-bottom: 25px; line-height: 1.6; border-left: 6px solid var(--p); }
+        .scenario-box h2 { margin-top: 0; color: var(--p); }
+        .question-group { background: #ffffff; border: 1px solid #d1d5db; padding: 20px; border-radius: 12px; margin-bottom: 15px; }
+        .question-group h4 { margin: 0 0 12px 0; color: #374151; font-size: 1.05rem; }
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #e2e8f0; background: #fff; font-size: 1rem; color: #4b5563; outline: none; transition: border-color 0.2s; }
+        select:focus { border-color: var(--p); }
+        .nav-btns { display: flex; gap: 15px; margin-top: 25px; }
+        button { flex: 1; padding: 16px; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 1rem; text-transform: uppercase; }
+        .btn-check { background: var(--p); color: white; }
+        .btn-check:hover { background: #4338ca; transform: translateY(-2px); }
+        .btn-reset { background: #f3f4f6; color: #4b5563; border: 1px solid #d1d5db; }
+        .feedback { margin-top: 20px; padding: 15px; border-radius: 10px; display: none; font-weight: bold; text-align: center; }
+        .error { background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; display: block; }
+        .success { background: #dcfce7; color: #15803d; border: 1px solid #4ade80; display: block; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <img id="case-img" src="" alt="Caso" class="case-image">
+    
+    <div class="content">
+        <div class="score-board">
+            <span id="case-label">Caso 1 de 5</span>
+            <span style="color: var(--p)">Puntos: <span id="score">0</span></span>
+        </div>
+        <div class="progress-bar"><div id="progress-fill"></div></div>
+
+        <div id="game-ui">
+            <div class="scenario-box">
+                <h2 id="case-title"></h2>
+                <p id="scenario-text"></p>
+            </div>
+            <div id="questions-container"></div>
+            <div id="feedback" class="feedback"></div>
+            <div class="nav-btns">
+                <button class="btn-reset" onclick="resetForm()">Reiniciar Caso</button>
+                <button class="btn-check" onclick="checkAnswers()">Validar Respuestas</button>
+            </div>
+        </div>
+
+        <div id="final-screen" class="hidden" style="text-align:center">
+            <div style="font-size: 5rem; margin-bottom: 20px;">🏆</div>
+            <h1 style="color:var(--s); margin-bottom: 10px;">¡Maestro de la Privacidad!</h1>
+            <p style="font-size: 1.2rem; color: #6b7280; margin-bottom: 30px;">Has analizado con éxito todos los escenarios de riesgo digital.</p>
+            <h2 id="final-score-val" style="background: #f0fdf4; padding: 15px; border-radius: 10px; display: inline-block;"></h2>
+            <br><button onclick="location.reload()" class="btn-check" style="max-width: 250px; margin-top: 20px;">Jugar de nuevo</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const cases = [
+        {
+            title: "Caso 1: El 'Story' descuidado",
+            image: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=1000",
+            text: "Lucía sube una foto de su nuevo carné a Instagram junto a su cara. En el pie de foto invita a sus amigos a su casa y en el fondo se distingue claramente el número 24 de su portal.",
+            qs: [
+                { q: "¿Qué Datos Directos Identificativos se ven?", options: ["Marca del coche", "Nombre completo y rostro", "Número de seguidores"], correct: 1 },
+                { q: "¿Qué datos de características revela el carné?", options: ["Firma y fecha de nacimiento", "Su altura", "Su dirección de correo"], correct: 0 },
+                { q: "¿Cómo se deduce su dirección exacta?", options: ["No se puede saber", "Por el número de portal y la referencia a su casa", "Por la hora de la publicación"], correct: 1 }
+            ]
+        },
+        {
+            title: "Caso 2: El 'Gamer' en streaming",
+            image: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1000",
+            text: "Marc grita su teléfono por error en Twitch. Su perfil es 'Marc_BCN99' y menciona que es fan del Barça y del Goiko.",
+            qs: [
+                { q: "¿Qué dato crítico de contacto ha revelado?", options: ["Su IP", "Su número de teléfono", "Su nombre real"], correct: 1 },
+                { q: "¿Qué indican 'BCN' y '99'?", options: ["Su ciudad (Barcelona) y año de nacimiento (1999)", "Le gusta el baloncesto", "Es un código secreto"], correct: 0 },
+                { q: "¿Qué usaría un anunciante para enviarle publicidad?", options: ["Su equipo de fútbol y restaurante favorito", "Su nivel de habilidad", "Su tipo de conexión"], correct: 0 }
+            ]
+        },
+        {
+            title: "Caso 3: La App de Salud 'FitLife'",
+            image: "https://images.unsplash.com/photo-1510017803434-a899398421b3?q=80&w=1000",
+            text: "Una App 'gratis' pide GPS, frecuencia cardíaca, peso y alergias para funcionar.",
+            qs: [
+                { q: "¿Qué datos son de Categoría Especial?", options: ["Nombre y GPS", "Frecuencia cardíaca, peso y alergias", "Lista de contactos"], correct: 1 },
+                { q: "¿Por qué el GPS revela salud indirectamente?", options: ["Porque gasta batería", "Porque detecta visitas a hospitales o farmacias", "Porque cuenta los pasos"], correct: 1 },
+                { q: "¿Cómo se financia una App de salud gratuita?", options: ["Vendiendo datos a seguros o farmacéuticas", "Donaciones", "No tiene negocio"], correct: 0 }
+            ]
+        },
+        {
+            title: "Caso 4: WiFi Abierto en el Centro Comercial",
+            image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=1000",
+            text: "Sara usa un WiFi público llamado 'WiFi_Gratis_Mall'. Da su email y acepta 'cookies de terceros'. Luego entra en su cuenta del banco.",
+            qs: [
+                { q: "¿Qué dato de contacto directo ha cedido Sara?", options: ["Su contraseña bancaria", "Su dirección de correo electrónico", "Su nombre real"], correct: 1 },
+                { q: "¿Cuál es el riesgo real de usar banca online en este WiFi?", options: ["Que alguien intercepte sus datos (Sniffing)", "Que la conexión sea lenta", "Que el móvil se caliente"], correct: 0 },
+                { q: "¿Para qué sirven las cookies de terceros aceptadas?", options: ["Acelerar el WiFi", "Rastrear sus hábitos para enviarle publicidad personalizada", "Protección contra virus"], correct: 1 }
+            ]
+        },
+        {
+            title: "Caso 5: El Test de Personalidad Viral",
+            image: "https://images.unsplash.com/photo-1621252179027-94459d278660?q=80&w=1000",
+            text: "Alex hace un test '¿Qué animal eres?' que pide acceso a sus mensajes privados y le pregunta el nombre de su primera mascota.",
+            qs: [
+                { q: "¿Qué permiso es el más peligroso e innecesario?", options: ["Acceso al perfil público", "Acceso a sus mensajes privados", "Acceso al idioma del móvil"], correct: 1 },
+                { q: "¿Por qué el test pregunta por su mascota?", options: ["Para dar un resultado gracioso", "Porque es una pregunta común de seguridad bancaria", "Para regalarle cupones"], correct: 1 },
+                { q: "¿A quién más pone en riesgo al dar permiso de contactos?", options: ["A nadie", "A sus amigos, cuyos datos también serán recolectados", "A la red social"], correct: 1 }
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+
+    function render() {
+        const c = cases[currentIdx];
+        document.getElementById('case-img').src = c.image;
+        document.getElementById('case-label').textContent = `Caso ${currentIdx + 1} de ${cases.length}`;
+        document.getElementById('case-title').textContent = c.title;
+        document.getElementById('scenario-text').textContent = c.text;
+        document.getElementById('progress-fill').style.width = `${(currentIdx / cases.length) * 100}%`;
+        
+        const qContainer = document.getElementById('questions-container');
+        qContainer.innerHTML = '';
+        
+        c.qs.forEach((item, i) => {
+            qContainer.innerHTML += `
+                <div class="question-group">
+                    <h4>${item.q}</h4>
+                    <select id="q${i}">
+                        <option value="-1">-- Elige la respuesta --</option>
+                        ${item.options.map((o, idx) => `<option value="${idx}">${o}</option>`).join('')}
+                    </select>
+                </div>`;
+        });
+        document.getElementById('feedback').style.display = 'none';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function checkAnswers() {
+        const c = cases[currentIdx];
+        let correctCount = 0;
+        let allAnswered = true;
+
+        c.qs.forEach((item, i) => {
+            const val = parseInt(document.getElementById(`q${i}`).value);
+            if(val === -1) allAnswered = false;
+            if(val === item.correct) correctCount++;
+        });
+
+        const f = document.getElementById('feedback');
+        if(!allAnswered) {
+            f.textContent = "⚠️ Por favor, responde todas las preguntas.";
+            f.className = "feedback error";
+            f.style.display = 'block';
+            return;
+        }
+
+        if(correctCount === c.qs.length) {
+            score += 100;
+            document.getElementById('score').textContent = score;
+            f.textContent = "✅ ¡Correcto! Has analizado el riesgo perfectamente.";
+            f.className = "feedback success";
+            f.style.display = 'block';
+            
+            setTimeout(() => {
+                currentIdx++;
+                if(currentIdx < cases.length) render();
+                else {
+                    document.getElementById('game-ui').className = 'hidden';
+                    document.getElementById('case-img').className = 'hidden';
+                    document.getElementById('final-screen').classList.remove('hidden');
+                    document.getElementById('progress-fill').style.width = '100%';
+                    document.getElementById('final-score-val').textContent = `Puntuación Total: ${score} Puntos`;
+                }
+            }, 2000);
+        } else {
+            f.textContent = "❌ Algunas respuestas son incorrectas. ¡Revisa el escenario!";
+            f.className = "feedback error";
+            f.style.display = 'block';
+        }
+    }
+
+    function resetForm() { render(); }
+    render();
+</script>
+</body>
+</html>
