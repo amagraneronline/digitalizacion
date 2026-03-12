@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller de Privacidad Digital</title>
+    <style>
+        :root {
+            --primary: #2980b9;
+            --secondary: #27ae60;
+            --warning: #e67e22;
+            --danger: #e74c3c;
+            --light: #f4f7f6;
+            --dark: #2c3e50;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); padding: 20px; line-height: 1.6; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        
+        h1 { text-align: center; color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        .user-welcome { text-align: right; font-weight: bold; color: var(--primary); margin-bottom: 20px; font-size: 1.1em; }
+
+        .help-box { background: #e8f4fd; border-left: 5px solid var(--primary); padding: 15px; margin-bottom: 30px; border-radius: 0 8px 8px 0; }
+        .help-box summary { font-weight: bold; cursor: pointer; color: var(--primary); outline: none; }
+
+        .section { margin-bottom: 40px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background: #fff; }
+
+        /* Actividad 1 */
+        .origin-box { display: flex; flex-wrap: wrap; gap: 10px; min-height: 60px; padding: 15px; background: #fafafa; border: 2px dashed #ccc; margin-bottom: 20px; border-radius: 8px; }
+        .draggable { padding: 8px 15px; background: var(--primary); color: white; border-radius: 20px; cursor: grab; font-weight: 500; font-size: 0.85em; transition: 0.2s; }
+        .drop-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .drop-zone { min-height: 100px; background: #f9f9f9; border: 2px solid #dfe6e9; border-radius: 10px; padding: 10px; text-align: center; }
+        .drop-zone.over { border-color: var(--primary); background: #ebf5fb; }
+
+        /* Actividad 2 */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.9em; }
+        th, td { padding: 10px; border: 1px solid #eee; text-align: left; }
+        th { background: var(--dark); color: white; }
+        select { width: 100%; padding: 6px; border-radius: 5px; border: 1px solid #ddd; background: white; }
+
+        /* Botones y Feedback */
+        .controls { display: flex; gap: 15px; justify-content: center; margin-top: 30px; position: sticky; bottom: 20px; background: rgba(255,255,255,0.9); padding: 15px; border-top: 1px solid #eee; }
+        button { padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-check { background: var(--secondary); color: white; }
+        .btn-reset { background: var(--warning); color: white; }
+        
+        .result-card { display: none; margin-top: 20px; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid; }
+        .success { background: #eafaf1; border-color: var(--secondary); color: #145a32; }
+        .retry { background: #fef5e7; border-color: var(--warning); color: #7e5109; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="welcome-user" class="user-welcome">¡Hola! Preparando taller...</div>
+    <h1>Protección de Datos Personales</h1>
+
+    <details class="help-box" open>
+        <summary>🔎 Acuérdate de las categorías:</summary>
+        <p style="font-size: 0.9em; margin-top: 10px;">
+            <b>Identificativos:</b> Identifican tu nombre/ID. | <b>Contacto:</b> Dónde encontrarte. | <b>Biométricos:</b> Tu cuerpo. | 
+            <b>Imagen/Sonido:</b> Cómo te ves/oyes. | <b>Características:</b> Tu perfil personal. | <b>Sensibles:</b> Salud, política, religión.
+        </p>
+    </details>
+
+    <div class="section">
+        <h2>1. Identificación: Directa vs Indirecta</h2>
+        <div id="origin" class="origin-box" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="draggable" draggable="true" id="d1" data-type="directo">Nombre Completo</div>
+            <div class="draggable" draggable="true" id="d2" data-type="directo">DNI / NIE</div>
+            <div class="draggable" draggable="true" id="d3" data-type="directo">Foto del rostro</div>
+            <div class="draggable" draggable="true" id="i1" data-type="indirecto">Dirección IP</div>
+            <div class="draggable" draggable="true" id="i2" data-type="indirecto">Matrícula</div>
+            <div class="draggable" draggable="true" id="i3" data-type="indirecto">Nº Afiliación SS</div>
+        </div>
+        <div class="drop-container">
+            <div id="directo" class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>Dato Directo</h3></div>
+            <div id="indirecto" class="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)"><h3>Dato Indirecto</h3></div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>2. Clasifica los ejemplos (12 retos)</h2>
+        <table>
+            <thead>
+                <tr><th>Dato</th><th>Categoría</th></tr>
+            </thead>
+            <tbody id="table-body">
+                <tr><td>Nº de Pasaporte</td><td><select class="cat-sel" data-ans="Base"><option value="">--</option><option value="Base">Identificativos Básicos</option><option value="Cont">Contacto Directo</option><option value="Sens">Datos Sensibles</option><option value="Pers">Características Personales</option></select></td></tr>
+                <tr><td>Email personal</td><td><select class="cat-sel" data-ans="Cont"><option value="">--</option><option value="Cont">Contacto Directo</option><option value="Base">Identificativos Básicos</option><option value="Pers">Características Personales</option><option value="Img">Imagen y Sonido</option></select></td></tr>
+                <tr><td>Huella dactilar</td><td><select class="cat-sel" data-ans="Biom"><option value="">--</option><option value="Biom">Biométricos</option><option value="Img">Imagen y Sonido</option><option value="Base">Identificativos Básicos</option><option value="Sens">Datos Sensibles</option></select></td></tr>
+                <tr><td>Vídeo de vigilancia</td><td><select class="cat-sel" data-ans="Img"><option value="">--</option><option value="Img">Imagen y Sonido</option><option value="Biom">Biométricos</option><option value="Cont">Contacto Directo</option><option value="Base">Identificativos Básicos</option></select></td></tr>
+                <tr><td>Grupo sanguíneo</td><td><select class="cat-sel" data-ans="Sens"><option value="">--</option><option value="Sens">Datos Sensibles</option><option value="Pers">Características Personales</option><option value="Base">Identificativos Básicos</option><option value="Biom">Biométricos</option></select></td></tr>
+                <tr><td>Aficiones/Hobbies</td><td><select class="cat-sel" data-ans="Pers"><option value="">--</option><option value="Pers">Características Personales</option><option value="Base">Identificativos Básicos</option><option value="Cont">Contacto Directo</option><option value="Sens">Datos Sensibles</option></select></td></tr>
+                <tr><td>Reconocimiento facial</td><td><select class="cat-sel" data-ans="Biom"><option value="">--</option><option value="Biom">Biométricos</option><option value="Img">Imagen y Sonido</option><option value="Sens">Datos Sensibles</option><option value="Base">Identificativos Básicos</option></select></td></tr>
+                <tr><td>Creencias religiosas</td><td><select class="cat-sel" data-ans="Sens"><option value="">--</option><option value="Sens">Datos Sensibles</option><option value="Pers">Características Personales</option><option value="Cont">Contacto Directo</option><option value="Base">Identificativos Básicos</option></select></td></tr>
+                <tr><td>Voz grabada</td><td><select class="cat-sel" data-ans="Img"><option value="">--</option><option value="Img">Imagen y Sonido</option><option value="Biom">Biométricos</option><option value="Cont">Contacto Directo</option><option value="Pers">Características Personales</option></select></td></tr>
+                <tr><td>Talla de zapatos</td><td><select class="cat-sel" data-ans="Pers"><option value="">--</option><option value="Pers">Características Personales</option><option value="Base">Identificativos Básicos</option><option value="Biom">Biométricos</option><option value="Sens">Datos Sensibles</option></select></td></tr>
+                <tr><td>Firma de la persona</td><td><select class="cat-sel" data-ans="Base"><option value="">--</option><option value="Base">Identificativos Básicos</option><option value="Biom">Biométricos</option><option value="Img">Imagen y Sonido</option><option value="Cont">Contacto Directo</option></select></td></tr>
+                <tr><td>Orientación sexual</td><td><select class="cat-sel" data-ans="Sens"><option value="">--</option><option value="Sens">Datos Sensibles</option><option value="Pers">Características Personales</option><option value="Base">Identificativos Básicos</option><option value="Cont">Contacto Directo</option></select></td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="validar()">Finalizar y Ver Resultados</button>
+        <button class="btn-reset" onclick="reiniciar()">Reiniciar Todo</button>
+    </div>
+
+    <div id="result-box" class="result-card"></div>
+</div>
+
+<script>
+    let nombreUsuario = "";
+
+    // Solicitar nombre al cargar
+    window.onload = function() {
+        while(!nombreUsuario || nombreUsuario.trim() === "") {
+            nombreUsuario = prompt("Bienvenido al taller de Privacidad. ¿Cómo te llamas?");
+        }
+        document.getElementById('welcome-user').innerText = "👤 Participante: " + nombreUsuario;
+    };
+
+    // Lógica Drag and Drop
+    function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('over'); }
+    document.querySelectorAll('.drop-zone, #origin').forEach(z => {
+        z.addEventListener('dragleave', e => e.currentTarget.classList.remove('over'));
+    });
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+    document.querySelectorAll('.draggable').forEach(d => d.addEventListener('dragstart', drag));
+
+    function drop(ev) {
+        ev.preventDefault();
+        ev.currentTarget.classList.remove('over');
+        let data = ev.dataTransfer.getData("text");
+        let target = ev.currentTarget;
+        if (target.id === 'origin' || target.classList.contains('drop-zone')) {
+            target.appendChild(document.getElementById(data));
+        }
+    }
+
+    // Validación y Mensaje Personalizado
+    function validar() {
+        let aciertos = 0; let total = 0;
+        
+        // Validar Actividad 1
+        document.querySelectorAll('.drop-zone').forEach(zone => {
+            zone.querySelectorAll('.draggable').forEach(item => {
+                total++;
+                if (item.getAttribute('data-type') === zone.id) {
+                    aciertos++; item.style.background = "var(--secondary)";
+                } else { item.style.background = "var(--danger)"; }
+            });
+        });
+
+        // Validar Actividad 2
+        document.querySelectorAll('.cat-sel').forEach(sel => {
+            total++;
+            if (sel.value === sel.getAttribute('data-ans')) {
+                aciertos++; sel.style.border = "2px solid var(--secondary)";
+                sel.style.background = "#eafaf1";
+            } else {
+                sel.style.border = "2px solid var(--danger)";
+                sel.style.background = "#fdedec";
+            }
+        });
+
+        mostrarResultado(aciertos, total);
+    }
+
+    function mostrarResultado(aciertos, total) {
+        const resultBox = document.getElementById('result-box');
+        resultBox.style.display = "block";
+        
+        let mensaje = "";
+        if (aciertos === total) {
+            resultBox.className = "result-card success";
+            mensaje = `<h3>🏆 ¡Increíble, ${nombreUsuario}!</h3>
+                       <p>Has conseguido un pleno: <b>${aciertos} de ${total}</b>. Tienes un conocimiento experto en protección de datos.</p>`;
+        } else {
+            resultBox.className = "result-card retry";
+            mensaje = `<h3>💪 ¡Buen intento, ${nombreUsuario}!</h3>
+                       <p>Has acertado <b>${aciertos} de ${total}</b>. Revisa los marcados en rojo y sigue aprendiendo sobre tu privacidad.</p>`;
+        }
+        resultBox.innerHTML = mensaje;
+        resultBox.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function reiniciar() {
+        const origin = document.getElementById('origin');
+        document.querySelectorAll('.draggable').forEach(item => {
+            item.style.background = "var(--primary)";
+            origin.appendChild(item);
+        });
+        document.querySelectorAll('.cat-sel').forEach(sel => {
+            sel.value = ""; 
+            sel.style.border = "1px solid #ddd";
+            sel.style.background = "white";
+        });
+        document.getElementById('result-box').style.display = "none";
+    }
+</script>
+
+</body>
+</html>
